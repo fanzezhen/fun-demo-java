@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>demo</artifactId>
+        <artifactId>fun-demo-java</artifactId>
         <groupId>com.github.fanzezhen</groupId>
-        <version>3.0.0</version>
+        <version>3.4.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -49,15 +49,15 @@
         </dependency>
         <dependency>
             <groupId>com.github.fanzezhen</groupId>
-            <artifactId>common-sentinel</artifactId>
+            <artifactId>fun-framework-sentinel</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.fanzezhen</groupId>
-            <artifactId>common-spring-doc</artifactId>
+            <artifactId>fun-framework-spring-doc</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.fanzezhen</groupId>
-            <artifactId>common-web</artifactId>
+            <artifactId>fun-framework-web</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
