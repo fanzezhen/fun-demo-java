@@ -6,16 +6,12 @@
     <parent>
         <groupId>com.github.fanzezhen</groupId>
         <artifactId>fun-demo-java</artifactId>
-        <version>3.4.3</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>demo-webmagic</artifactId>
+    <artifactId>fun-demo-web-magic</artifactId>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>cn.hutool</groupId>

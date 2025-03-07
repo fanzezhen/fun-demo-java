@@ -22,7 +22,7 @@ public class CommonUtil {
                 .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0")
                 .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                 .addHeader("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
-                .addHeader("Accept- Encoding", "gzip, deflate")
+                .addHeader("Accept-Encoding", "gzip, deflate")
                 .addHeader("Connection", "keep-alive")
                 .addHeader("Upgrade-Insecure-Requests", "1")
                 .addHeader("Cache-Control", "max-age=0")

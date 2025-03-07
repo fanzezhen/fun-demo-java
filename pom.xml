@@ -20,13 +20,6 @@
     </properties>
     <dependencyManagement>
         <dependencies>
-<!--            <dependency>-->
-<!--                <artifactId>fun-framework-java</artifactId>-->
-<!--                <groupId>com.github.fanzezhen</groupId>-->
-<!--                <version>${fun-framework.version}</version>-->
-<!--                <type>pom</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
             <dependency>
                 <groupId>com.github.fanzezhen.demo</groupId>
                 <artifactId>log-biz</artifactId>
@@ -41,6 +34,7 @@
         <module>fun-demo-gateway-server</module>
         <module>fun-demo-low-code-magic</module>
         <module>fun-demo-maven-package</module>
+        <module>fun-demo-web-magic</module>
     </modules>
 
     <build>
