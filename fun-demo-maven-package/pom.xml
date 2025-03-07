@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>fun-demo-maven-package</artifactId>
+    <name>${project.artifactId}</name>
 
     <properties>
         <main.class>com.github.fanzezhen.demo.mavenpackage.Main</main.class>

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.fanzezhen</groupId>
         <artifactId>fun-framework-java</artifactId>
-        <version>3.4.3.2</version>
+        <version>3.4.3.3</version>
     </parent>
     <artifactId>fun-demo-java</artifactId>
     <packaging>pom</packaging>
@@ -101,7 +101,7 @@
             </properties>
         </profile>
     </profiles>
-    <name>${project.groupId}.${project.artifactId}</name>
+    <name>${project.artifactId}</name>
     <url>https://github.com/fanzezhen/${project.artifactId}</url>
     <description>demo</description>
 
