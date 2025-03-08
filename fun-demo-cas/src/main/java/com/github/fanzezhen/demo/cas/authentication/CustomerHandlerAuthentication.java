@@ -8,7 +8,7 @@ import cn.stylefeng.roses.kernel.model.exception.enums.CoreExceptionEnum;
 import com.github.fanzezhen.demo.cas.DataService;
 import com.github.fanzezhen.demo.cas.CaptchaUsernamePasswordCredential;
 import com.github.fanzezhen.demo.cas.exection.CheckCodeErrorException;
-import com.github.fanzezhen.fun.framework.core.constant.SecurityConstant;
+import com.github.fanzezhen.demo.cas.SecurityConstant;
 import com.github.fanzezhen.fun.framework.core.model.bean.ImageCode;
 import com.github.fanzezhen.fun.framework.mp.model.SysUserDto;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +45,7 @@ public class CustomerHandlerAuthentication extends AbstractPreAndPostProcessingA
         String captcha = customCredential.getCaptcha();
         log.info("username : " + username);
         log.info("password : " + password);
-        if (StrUtil.isEmpty(username) || CharSequenceUtil.isEmpty(password) || StrUtil.isEmpty(captcha)) {
+        if (CharSequenceUtil.isEmpty(username) || CharSequenceUtil.isEmpty(password) || CharSequenceUtil.isEmpty(captcha)) {
             throw new AuthenticationException("用户名、密码、验证码 不能为空");
         }
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();

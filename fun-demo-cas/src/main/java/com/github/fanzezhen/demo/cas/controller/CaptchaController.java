@@ -1,6 +1,6 @@
 package com.github.fanzezhen.demo.cas.controller;
 
-import com.github.fanzezhen.fun.framework.core.constant.SecurityConstant;
+import com.github.fanzezhen.demo.cas.SecurityConstant;
 import com.github.fanzezhen.fun.framework.core.model.bean.ImageCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,9 +20,10 @@ import java.util.Random;
 /**
  * @author zezhen.fan
  */
-@Controller("captcha-api")
+@Controller
 @RequestMapping("/captcha")
 public class CaptchaController {
+    private final Random random = new Random();
     private final SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
 
     @GetMapping("/image-code")
@@ -45,8 +46,6 @@ public class CaptchaController {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         Graphics graphics = image.getGraphics();
-
-        Random random = new Random();
 
         graphics.setColor(getRandColor(200, 500));
         graphics.fillRect(0, 0, width, height);
@@ -75,7 +74,6 @@ public class CaptchaController {
 
     private Color getRandColor(int fc, int bc) {
         int range = 255;
-        Random random = new Random();
         if (fc > range) {
             fc = range;
         }
