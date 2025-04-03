@@ -6,13 +6,13 @@
     <parent>
         <groupId>com.github.fanzezhen</groupId>
         <artifactId>fun-framework-java</artifactId>
-        <version>3.4.3.4</version>
+        <version>3.4.3.5</version>
     </parent>
     <artifactId>fun-demo-java</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
     <properties>
-        <revision>3.4.3.4</revision>
+        <revision>3.4.3.5</revision>
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -34,6 +34,7 @@
         <module>fun-demo-low-code-magic</module>
         <module>fun-demo-maven-package</module>
         <module>fun-demo-web-magic</module>
+        <module>fun-demo-framework</module>
     </modules>
 
     <build>
