@@ -5,22 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.github.fanzezhen</groupId>
-        <artifactId>fun-demo-framework</artifactId>
+        <artifactId>fun-demo-java</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>fun-demo-framework-core-log</artifactId>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <artifactId>fun-demo-tsp</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.github.fanzezhen</groupId>
-            <artifactId>fun-framework-core-log</artifactId>
+            <artifactId>fun-framework-core-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.ortools</groupId>
+            <artifactId>ortools-java</artifactId>
+            <version>9.12.4544</version>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
@@ -31,5 +30,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
+
 
 </project>
