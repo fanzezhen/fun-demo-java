@@ -13,6 +13,11 @@
     <artifactId>fun-demo-tsp</artifactId>
     <dependencies>
         <dependency>
+            <groupId>org.optaplanner</groupId>
+            <artifactId>optaplanner-core</artifactId>
+            <version>10.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.fanzezhen</groupId>
             <artifactId>fun-framework-core-all</artifactId>
         </dependency>

@@ -1,16 +1,7 @@
 package com.github.fanzezhen.demo.tsp;
 
 import com.google.ortools.Loader;
-import com.google.ortools.constraintsolver.Assignment;
-import com.google.ortools.constraintsolver.FirstSolutionStrategy;
-import com.google.ortools.constraintsolver.IntVar;
-import com.google.ortools.constraintsolver.LocalSearchMetaheuristic;
-import com.google.ortools.constraintsolver.RoutingDimension;
-import com.google.ortools.constraintsolver.RoutingIndexManager;
-import com.google.ortools.constraintsolver.RoutingModel;
-import com.google.ortools.constraintsolver.RoutingSearchParameters;
-import com.google.ortools.constraintsolver.Solver;
-import com.google.ortools.constraintsolver.main;
+import com.google.ortools.constraintsolver.*;
 import com.google.protobuf.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,9 +12,7 @@ import java.util.List;
  * 软窗口+时间窗口影响路线
  */
 @Slf4j
-public class FlowerShopDelivery {
-    // 设置出发时间
-    static long departureTime = 620; // 10:20 AM
+public class FlowerShopDelivery3 {
 
     static class Location {
         String name;
@@ -32,17 +21,15 @@ public class FlowerShopDelivery {
         int[] timeWindow;
         int earlyPenalty;
         int latePenalty;
-        int serviceTime; // 新增服务时间字段（分钟）
 
         Location(String name, double lat, double lng, int[] timeWindow,
-                 int earlyPenalty, int latePenalty, int serviceTime) {
+                 int earlyPenalty, int latePenalty) {
             this.name = name;
             this.lat = lat;
             this.lng = lng;
             this.timeWindow = timeWindow;
             this.earlyPenalty = earlyPenalty;
             this.latePenalty = latePenalty;
-            this.serviceTime = serviceTime;
         }
     }
 
@@ -57,17 +44,17 @@ public class FlowerShopDelivery {
 
         // 距离回调
         final int transitCallbackIndex = routing.registerTransitCallback(
-                (long fromIndex, long toIndex) -> {
-                    int serviceTime = locations.get(manager.indexToNode(fromIndex)).serviceTime;
-                    return serviceTime+distanceMatrix[
-                            manager.indexToNode(fromIndex)][manager.indexToNode(toIndex)];
-                }
+                (long fromIndex, long toIndex) -> distanceMatrix[
+                        manager.indexToNode(fromIndex)][manager.indexToNode(toIndex)]
         );
         routing.setArcCostEvaluatorOfAllVehicles(transitCallbackIndex);
 
         // 时间维度
-        routing.addDimension(transitCallbackIndex, 600, 1440, false, "Time");
+        routing.addDimension(transitCallbackIndex, 30, 1440, false, "Time");
         RoutingDimension timeDimension = routing.getMutableDimension("Time");
+
+        // 设置出发时间
+        long departureTime = 620; // 10:20 AM
         timeDimension.cumulVar(routing.start(0)).setRange(departureTime, departureTime);
 
         // 软时间窗约束
@@ -149,16 +136,16 @@ public class FlowerShopDelivery {
                 .build();
 
         Assignment solution = routing.solveWithParameters(searchParameters);
-        printSolution( distanceMatrix,locations, manager, routing, solution);
+        printSolution(locations, manager, routing, solution);
     }
 
     private static List<Location> createLocations() {
         List<Location> locations = new ArrayList<>();
-        locations.add(new Location("春熙路花店", 30.660083, 104.077774, new int[]{0, 1439}, 0, 0, 0));
-        locations.add(new Location("天府广场", 30.661939, 104.065861, new int[]{540, 720}, 1, 3, 10));
-        locations.add(new Location("锦里古街", 30.650534, 104.049828, new int[]{660, 840}, 1, 5, 10));
-        locations.add(new Location("宽窄巷子", 30.66737, 104.056006, new int[]{780, 960}, 1, 2, 10));
-        locations.add(new Location("环球中心", 30.573292, 104.063403, new int[]{900, 1080}, 1, 10, 10));
+        locations.add(new Location("春熙路花店", 30.660083, 104.077774, new int[]{0, 1439}, 0, 0));
+        locations.add(new Location("天府广场", 30.661939, 104.065861, new int[]{540, 720}, 1, 3));
+        locations.add(new Location("锦里古街", 30.650534, 104.049828, new int[]{660, 840}, 1, 5));
+        locations.add(new Location("宽窄巷子", 30.66737, 104.056006, new int[]{780, 960}, 1, 2));
+        locations.add(new Location("环球中心", 30.573292, 104.063403, new int[]{900, 1080}, 1, 10));
         return locations;
     }
 
@@ -176,7 +163,7 @@ public class FlowerShopDelivery {
         return matrix;
     }
 
-    private static void printSolution(long[][] distanceMatrix,
+    private static void printSolution(
             List<Location> locations, RoutingIndexManager manager,
             RoutingModel routing, Assignment solution) {
         if (solution == null) {
@@ -194,36 +181,24 @@ public class FlowerShopDelivery {
         System.out.printf("总惩罚成本: %d 元\n", totalPenalty);
         System.out.printf("综合成本: %d (时间+惩罚)\n\n", travelTime + totalPenalty);
 
-        System.out.println("序号 | 配送点      | 到达后交付花束时间 | 交付花束完成后离开时间  | 提前到达等待时间 | 时间窗        | 早到 | 迟到 | 惩罚成本 | 状态");
-        System.out.println("----|------------|----------|----------|----------|--------------|------|------|----------|------");
+        System.out.println("序号 | 配送点      | 到达时间 | 时间窗        | 早到 | 迟到 | 惩罚成本 | 状态");
+        System.out.println("----|------------|----------|--------------|------|------|----------|------");
 
         long index = routing.start(0);
         int stopNumber = 1;
-        long lastDepartureTime = departureTime;
-        long lastNode = 0;
         while (!routing.isEnd(index)) {
             int node = manager.indexToNode(index);
             Location loc = locations.get(node);
 
-            long arrivalTime = solution.value(timeDimension.cumulVar(index));
-            long departureTime = arrivalTime + loc.serviceTime;
-            long currentDistanceMatrix = distanceMatrix[(int) lastNode][node];
-            long waitTime = arrivalTime - lastDepartureTime - currentDistanceMatrix;
-            lastNode = node;
-            lastDepartureTime = departureTime;
-//            long waitTime = index==0?0:solution.min(timeDimension.slackVar(index));
-//            long waitTime = (timeDimension.hasSlackVar(index)?solution.min(timeDimension.slacks(index));
-
+            long arrivalTime = solution.min(timeDimension.cumulVar(index));
             long earlyTime = Math.max(0, loc.timeWindow[0] - arrivalTime);
             long lateTime = Math.max(0, arrivalTime - loc.timeWindow[1]);
             int penalty = (int) (earlyTime * loc.earlyPenalty + lateTime * loc.latePenalty);
 
-            System.out.printf("%2d | %-10s | %02d:%02d   | %02d:%02d   | %3d分钟 | %02d:%02d-%02d:%02d | %3d分钟 | %3d分钟 | %5d | %s%n",
+            System.out.printf("%2d | %-10s | %02d:%02d   | %02d:%02d-%02d:%02d | %3d分钟 | %3d分钟 | %5d | %s%n",
                     stopNumber++,
                     loc.name,
                     arrivalTime / 60, arrivalTime % 60,
-                    departureTime / 60, departureTime % 60,
-                    waitTime,
                     loc.timeWindow[0] / 60, loc.timeWindow[0] % 60,
                     loc.timeWindow[1] / 60, loc.timeWindow[1] % 60,
                     earlyTime,

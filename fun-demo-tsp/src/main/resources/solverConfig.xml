@@ -1,0 +1,9 @@
+<solver>
+    <solutionClass>com.github.fanzezhen.demo.tsp.planner.VehicleRoutingSolution</solutionClass>
+    <entityClass>com.github.fanzezhen.demo.tsp.planner.Vehicle</entityClass>
+    <entityClass>com.github.fanzezhen.demo.tsp.planner.Customer</entityClass>
+    <easyScoreCalculatorClass>com.github.fanzezhen.demo.tsp.planner.TimeWindowScoreCalculator</easyScoreCalculatorClass>
+    <termination>
+        <secondsSpentLimit>5</secondsSpentLimit>
+    </termination>
+</solver>

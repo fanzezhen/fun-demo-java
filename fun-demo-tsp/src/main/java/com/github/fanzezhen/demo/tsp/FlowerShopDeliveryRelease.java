@@ -21,7 +21,7 @@ import java.util.List;
  * 软窗口+时间窗口影响路线
  */
 @Slf4j
-public class FlowerShopDelivery {
+public class FlowerShopDeliveryRelease {
     // 设置出发时间
     static long departureTime = 620; // 10:20 AM
 
@@ -78,6 +78,7 @@ public class FlowerShopDelivery {
             long index = manager.nodeToIndex(i);
             Location loc = locations.get(i);
             IntVar arrivalTime = timeDimension.cumulVar(index);
+            penaltyTerms.add(timeDimension.slackVar(index));
 
             // 早到惩罚
             IntVar earlyVar = routing.solver().makeIntVar(0, loc.timeWindow[0], "early_" + i);
@@ -111,6 +112,24 @@ public class FlowerShopDelivery {
                     )
             );
         }
+        // 等待时间成本
+        IntVar waitVar = routing.solver().makeIntVar(0, Integer.MAX_VALUE, "total_penalty");
+        List<IntVar> waitTerms = new ArrayList<>();
+
+        for (int i = 1; i < locations.size(); ++i) {
+            long index = manager.nodeToIndex(i);
+            waitTerms.add(timeDimension.slackVar(index));
+        }
+
+        // 计算等待时间成本
+        if (!waitTerms.isEmpty()) {
+            routing.solver().addConstraint(
+                    routing.solver().makeEquality(
+                            waitVar,
+                            routing.solver().makeSum(waitTerms.toArray(new IntVar[0])).var()
+                    )
+            );
+        }
 
         // 获取基础成本变量（修复 costVar 为 null 的问题）
         IntVar baseCostVar;
@@ -130,7 +149,10 @@ public class FlowerShopDelivery {
             routing.solver().addConstraint(
                     routing.solver().makeEquality(
                             totalCost,
-                            routing.solver().makeSum(baseCostVar, routing.solver().makeProd(totalPenalty, 800000)).var()
+                            routing.solver().makeSum(new IntVar[]{
+                                    baseCostVar,
+                                    routing.solver().makeProd(totalPenalty, 80000000).var()
+                            })
                     )
             );
         } else {
@@ -145,7 +167,7 @@ public class FlowerShopDelivery {
                 .toBuilder()
                 .setFirstSolutionStrategy(FirstSolutionStrategy.Value.PATH_CHEAPEST_ARC)
                 .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.Value.GUIDED_LOCAL_SEARCH)
-                .setTimeLimit(Duration.newBuilder().setSeconds(10).build())
+                .setTimeLimit(Duration.newBuilder().setSeconds(3).build())
                 .build();
 
         Assignment solution = routing.solveWithParameters(searchParameters);
@@ -177,8 +199,8 @@ public class FlowerShopDelivery {
     }
 
     private static void printSolution(long[][] distanceMatrix,
-            List<Location> locations, RoutingIndexManager manager,
-            RoutingModel routing, Assignment solution) {
+                                      List<Location> locations, RoutingIndexManager manager,
+                                      RoutingModel routing, Assignment solution) {
         if (solution == null) {
             log.warn("未找到解决方案！");
             return;
@@ -194,7 +216,7 @@ public class FlowerShopDelivery {
         System.out.printf("总惩罚成本: %d 元\n", totalPenalty);
         System.out.printf("综合成本: %d (时间+惩罚)\n\n", travelTime + totalPenalty);
 
-        System.out.println("序号 | 配送点      | 到达后交付花束时间 | 交付花束完成后离开时间  | 提前到达等待时间 | 时间窗        | 早到 | 迟到 | 惩罚成本 | 状态");
+        System.out.println("序号 | 配送点      | 到达后交付花束时间 | 交付花束完成后离开时间  | 时间窗        | 早到 | 迟到 | 提前到达等待时间 | 惩罚成本 | 状态");
         System.out.println("----|------------|----------|----------|----------|--------------|------|------|----------|------");
 
         long index = routing.start(0);
@@ -218,16 +240,16 @@ public class FlowerShopDelivery {
             long lateTime = Math.max(0, arrivalTime - loc.timeWindow[1]);
             int penalty = (int) (earlyTime * loc.earlyPenalty + lateTime * loc.latePenalty);
 
-            System.out.printf("%2d | %-10s | %02d:%02d   | %02d:%02d   | %3d分钟 | %02d:%02d-%02d:%02d | %3d分钟 | %3d分钟 | %5d | %s%n",
+            System.out.printf("%2d | %-10s | %02d:%02d   | %02d:%02d   | %02d:%02d-%02d:%02d | %3d分钟 | %3d分钟 | %3d分钟 | %5d | %s%n",
                     stopNumber++,
                     loc.name,
                     arrivalTime / 60, arrivalTime % 60,
                     departureTime / 60, departureTime % 60,
-                    waitTime,
                     loc.timeWindow[0] / 60, loc.timeWindow[0] % 60,
                     loc.timeWindow[1] / 60, loc.timeWindow[1] % 60,
                     earlyTime,
                     lateTime,
+                    waitTime,
                     penalty,
                     getDeliveryStatus(arrivalTime, loc.timeWindow));
 

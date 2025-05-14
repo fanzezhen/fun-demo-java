@@ -1,28 +1,18 @@
 package com.github.fanzezhen.demo.tsp;
-
 import com.google.ortools.Loader;
-import com.google.ortools.constraintsolver.Assignment;
-import com.google.ortools.constraintsolver.FirstSolutionStrategy;
-import com.google.ortools.constraintsolver.IntVar;
-import com.google.ortools.constraintsolver.LocalSearchMetaheuristic;
-import com.google.ortools.constraintsolver.RoutingDimension;
-import com.google.ortools.constraintsolver.RoutingIndexManager;
-import com.google.ortools.constraintsolver.RoutingModel;
-import com.google.ortools.constraintsolver.RoutingSearchParameters;
-import com.google.ortools.constraintsolver.main;
+import com.google.ortools.constraintsolver.*;
 import com.google.protobuf.Duration;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
- *
- * 根据时间算得分后结合距离重新选择最优路线
+ * 软窗口计算最短路线+时间惩罚
  */
+@Slf4j
 public class FlowerShopDelivery2 {
-
-    private static final Logger logger = Logger.getLogger(FlowerShopDelivery2.class.getName());
 
     // 成都市坐标点（模拟数据）
     static class Location {
@@ -51,20 +41,15 @@ public class FlowerShopDelivery2 {
         // 1. 创建配送点数据（成都市模拟坐标和时间窗）
         List<Location> locations = new ArrayList<>();
         // 配送中心（春熙路花店）
-        locations.add(new Location("春熙路花店", 30.660083, 104.077774,
-                new int[]{0, 1439}, 0, 0)); // 全天开放，无惩罚
+        locations.add(new Location("春熙路花店", 30.660083, 104.077774, new int[]{0, 1439}, 0, 0)); // 全天开放，无惩罚
         // 配送点1：天府广场
-        locations.add(new Location("天府广场", 30.661939, 104.065861,
-                new int[]{540, 720}, 1, 3)); // 9:00-12:00，早到1元/分钟，迟到3元/分钟
+        locations.add(new Location("天府广场", 30.661939, 104.065861, new int[]{540, 720}, 1, 3)); // 9:00-12:00，早到1元/分钟，迟到3元/分钟
         // 配送点2：锦里古街
-        locations.add(new Location("锦里古街", 30.650534, 104.049828,
-                new int[]{660, 840}, 1, 5)); // 11:00-14:00，早到1元/分钟，迟到5元/分钟
+        locations.add(new Location("锦里古街", 30.650534, 104.049828, new int[]{660, 840}, 1, 5)); // 11:00-14:00，早到1元/分钟，迟到5元/分钟
         // 配送点3：宽窄巷子
-        locations.add(new Location("宽窄巷子", 30.66737, 104.056006,
-                new int[]{780, 960}, 1, 2)); // 13:00-16:00，早到1元/分钟，迟到2元/分钟
+        locations.add(new Location("宽窄巷子", 30.66737, 104.056006, new int[]{780, 960}, 1, 2)); // 13:00-16:00，早到1元/分钟，迟到2元/分钟
         // 配送点4：环球中心
-        locations.add(new Location("环球中心", 30.573292, 104.063403,
-                new int[]{900, 1080}, 1, 10)); // 15:00-18:00，早到1元/分钟，迟到10元/分钟
+        locations.add(new Location("环球中心", 30.573292, 104.063403, new int[]{900, 1080}, 1, 10)); // 15:00-18:00，早到1元/分钟，迟到10元/分钟
 
         // 2. 计算距离矩阵（使用曼哈顿距离模拟）
         long[][] distanceMatrix = createDistanceMatrix(locations);
@@ -86,7 +71,7 @@ public class FlowerShopDelivery2 {
 
         // 5. 添加时间维度约束
         routing.addDimension(transitCallbackIndex,
-                10,  // 允许等待时间（分钟）
+                60,  // 允许等待时间（分钟）
                 1440, // 全天最大时间（1440分钟=24小时）
                 false, // 不强制开始时间
                 "Time");
@@ -183,7 +168,7 @@ public class FlowerShopDelivery2 {
             List<Location> locations, RoutingIndexManager manager,
             RoutingModel routing, Assignment solution) {
         if (solution == null) {
-            logger.warning("未找到解决方案！");
+            log.warn("未找到解决方案！");
             return;
         }
 
