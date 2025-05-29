@@ -1,15 +1,13 @@
 package com.github.fanzezhen.demo.cas.controller;
 
 import com.github.fanzezhen.demo.cas.SecurityConstant;
-import com.github.fanzezhen.fun.framework.core.model.bean.ImageCode;
+import com.github.fanzezhen.fun.framework.core.model.ImageCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.social.connect.web.HttpSessionSessionStrategy;
-import org.springframework.social.connect.web.SessionStrategy;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -24,12 +22,13 @@ import java.util.Random;
 @RequestMapping("/captcha")
 public class CaptchaController {
     private final Random random = new Random();
-    private final SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
 
     @GetMapping("/image-code")
     public void createCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCode imageCode = createImageCode();
-        sessionStrategy.setAttribute(new ServletWebRequest(request), SecurityConstant.SESSION_KEY_CAPTCHA, imageCode);
+        // 使用 HttpSession 替代 SessionStrategy 存储验证码
+        HttpSession session = request.getSession();
+        session.setAttribute(SecurityConstant.SESSION_KEY_CAPTCHA, imageCode);
         ImageIO.write(imageCode.getImage(), "jpeg", response.getOutputStream());
     }
 
