@@ -1,7 +1,6 @@
 package com.github.fanzezhen.demo.cas.authentication;
 
 import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import cn.stylefeng.roses.kernel.model.exception.ServiceException;
 import cn.stylefeng.roses.kernel.model.exception.enums.CoreExceptionEnum;
@@ -9,8 +8,8 @@ import com.github.fanzezhen.demo.cas.DataService;
 import com.github.fanzezhen.demo.cas.CaptchaUsernamePasswordCredential;
 import com.github.fanzezhen.demo.cas.exection.CheckCodeErrorException;
 import com.github.fanzezhen.demo.cas.SecurityConstant;
+import com.github.fanzezhen.demo.cas.model.SysUserDto;
 import com.github.fanzezhen.fun.framework.core.model.ImageCode;
-import com.github.fanzezhen.fun.framework.mp.model.SysUserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.*;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;

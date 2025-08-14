@@ -13,9 +13,6 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-/**
- * @author zezhen.fan
- */
 @EnableEurekaServer
 @SpringBootApplication
 public class EurekaServerApplication {

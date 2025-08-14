@@ -1,17 +1,14 @@
 package com.github.fanzezhen.demo.lowcode.maginapi;
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-
 /**
  * 配置自动启动浏览器
- *
- * @author zezhen.fan
  */
 @Slf4j
 @Component

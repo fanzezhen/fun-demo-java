@@ -14,6 +14,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>fun-demo-framework-core-log</module>
+        <module>fun-demo-framework-security</module>
+      <module>fun-demo-framework-security/fun-demo-framework-security-sa-token</module>
     </modules>
 
 </project>

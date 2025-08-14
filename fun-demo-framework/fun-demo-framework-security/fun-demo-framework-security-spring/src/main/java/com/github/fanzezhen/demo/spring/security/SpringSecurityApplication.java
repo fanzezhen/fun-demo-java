@@ -1,4 +1,4 @@
-package com.github.fanzezhen.demo.framework.core.log;
+package com.github.fanzezhen.demo.spring.security;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @SpringBootApplication
-public class Application {
+public class SpringSecurityApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(SpringSecurityApplication.class, args);
     }
 
     /**
