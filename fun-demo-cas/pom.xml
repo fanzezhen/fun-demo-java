@@ -29,15 +29,11 @@
         </dependency>
         <dependency>
             <groupId>com.github.fanzezhen</groupId>
-            <artifactId>fun-framework-mp-starter</artifactId>
+            <artifactId>fun-framework-data-mp-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.stylefeng.roses</groupId>
-            <artifactId>kernel-model</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
@@ -143,7 +139,6 @@
                 <configuration>
                     <mainClass>${mainClassName}</mainClass>
                     <addResources>true</addResources>
-                    <executable>${isExecutable}</executable>
                     <layout>WAR</layout>
                 </configuration>
                 <executions>
@@ -178,10 +173,6 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <recompressZippedFiles>false</recompressZippedFiles>
-                    <archive>
-                        <compress>false</compress>
-                        <manifestFile>${manifestFileToUse}</manifestFile>
-                    </archive>
                     <overlays>
                         <overlay>
                             <groupId>org.apereo.cas</groupId>

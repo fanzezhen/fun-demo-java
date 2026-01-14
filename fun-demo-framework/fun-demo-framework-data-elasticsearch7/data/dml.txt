@@ -1,0 +1,21 @@
+POST _bulk
+{"index":{"_index":"fun_enterprise","_id":"1"}}
+{"name":"阿里巴巴集团","name_st":"阿里巴巴集团有限公司","name_smart_ik":"阿里巴巴集团","name_max_word_ik":"阿里巴巴 集团","reg_cap":10000,"business_status":"存续","business_status_code":"ACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"false"}
+{"index":{"_index":"fun_enterprise","_id":"2"}}
+{"name":"腾讯控股有限公司","name_st":"腾讯控股有限公司","name_smart_ik":"腾讯控股","name_max_word_ik":"腾讯 控股 有限 公司","reg_cap":20000,"business_status":"存续","business_status_code":"ACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"false"}
+{"index":{"_index":"fun_enterprise","_id":"3"}}
+{"name":"百度在线网络技术公司","name_st":"百度在线网络技术(北京)有限公司","name_smart_ik":"百度在线","name_max_word_ik":"百度 在线 网络 技术 北京 有限公司","reg_cap":1500000,"business_status":"存续","business_status_code":"ACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"false"}
+{"index":{"_index":"fun_enterprise","_id":"4"}}
+{"name":"京东商城","name_st":"北京京东世纪贸易有限公司","name_smart_ik":"京东商城","name_max_word_ik":"京东 商城","reg_cap":800000,"business_status":"存续","business_status_code":"ACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"false"}
+{"index":{"_index":"fun_enterprise","_id":"5"}}
+{"name":"美团点评","name_st":"北京三快在线科技有限公司","name_smart_ik":"美团点评","name_max_word_ik":"美团 点评","reg_cap":1200000,"business_status":"存续","business_status_code":"ACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"false"}
+{"index":{"_index":"fun_enterprise","_id":"6"}}
+{"name":"字节跳动","name_st":"北京字节跳动网络技术有限公司","name_smart_ik":"字节跳动","name_max_word_ik":"字节 跳动","reg_cap":900000,"business_status":"存续","business_status_code":"ACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"false"}
+{"index":{"_index":"fun_enterprise","_id":"7"}}
+{"name":"滴滴出行","name_st":"北京小桔科技有限公司","name_smart_ik":"滴滴出行","name_max_word_ik":"滴滴 出行","reg_cap":750000,"business_status":"存续","business_status_code":"ACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"false"}
+{"index":{"_index":"fun_enterprise","_id":"8"}}
+{"name":"小米科技","name_st":"小米科技有限责任公司","name_smart_ik":"小米科技","name_max_word_ik":"小米 科技 有限 责任 公司","reg_cap":1100000,"business_status":"存续","business_status_code":"ACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"false"}
+{"index":{"_index":"fun_enterprise","_id":"9"}}
+{"name":"华为技术有限公司","name_st":"华为技术有限公司","name_smart_ik":"华为技术","name_max_word_ik":"华为 技术 有限 公司","reg_cap":3000000,"business_status":"存续","business_status_code":"ACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"false"}
+{"index":{"_index":"fun_enterprise","_id":"10"}}
+{"name":"网易公司","name_st":"网易(杭州)网络有限公司","name_smart_ik":"网易公司","name_max_word_ik":"网易 公司","reg_cap":600,"business_status":"注销","business_status_code":"INACTIVE","etl_process_time":"2024-06-18 10:30:00","deprecated":"true"}

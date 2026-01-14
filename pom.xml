@@ -6,13 +6,13 @@
     <parent>
         <groupId>com.github.fanzezhen</groupId>
         <artifactId>fun-framework-java</artifactId>
-        <version>3.5.4.20250816</version>
+        <version>4.0.1.20260101</version>
     </parent>
     <artifactId>fun-demo-java</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
     <properties>
-        <revision>3.5.4.20250816</revision>
+        <revision>4.0.1.20260101</revision>
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>

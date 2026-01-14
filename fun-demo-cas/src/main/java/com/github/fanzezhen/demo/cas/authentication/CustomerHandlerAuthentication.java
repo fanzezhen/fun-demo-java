@@ -2,20 +2,19 @@ package com.github.fanzezhen.demo.cas.authentication;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.digest.BCrypt;
-import cn.stylefeng.roses.kernel.model.exception.ServiceException;
-import cn.stylefeng.roses.kernel.model.exception.enums.CoreExceptionEnum;
 import com.github.fanzezhen.demo.cas.DataService;
 import com.github.fanzezhen.demo.cas.CaptchaUsernamePasswordCredential;
 import com.github.fanzezhen.demo.cas.exection.CheckCodeErrorException;
 import com.github.fanzezhen.demo.cas.SecurityConstant;
 import com.github.fanzezhen.demo.cas.model.SysUserDto;
 import com.github.fanzezhen.fun.framework.core.model.ImageCode;
+import com.github.fanzezhen.fun.framework.core.model.exception.ServiceException;
+import com.github.fanzezhen.fun.framework.core.model.exception.enums.ExceptionCodeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.*;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,8 +31,8 @@ import java.util.List;
 @Slf4j
 public class CustomerHandlerAuthentication extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    public CustomerHandlerAuthentication(String name, ServicesManager servicesManager, PrincipalFactory principalFactory, Integer order) {
-        super(name, servicesManager, principalFactory, order);
+    public CustomerHandlerAuthentication(String name,  PrincipalFactory principalFactory, Integer order) {
+        super(name, principalFactory, order);
     }
 
     @Override
@@ -49,12 +48,12 @@ public class CustomerHandlerAuthentication extends AbstractPreAndPostProcessingA
         }
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (!(requestAttributes instanceof ServletRequestAttributes)) {
-            throw new ServiceException(CoreExceptionEnum.SERVICE_ERROR);
+            throw new ServiceException(ExceptionCodeEnum.SERVICE_ERROR);
         }
         ServletRequestAttributes attributes = (ServletRequestAttributes) requestAttributes;
         jakarta.servlet.http.HttpSession httpSession = attributes.getRequest().getSession();
         if (httpSession == null) {
-            throw new ServiceException(CoreExceptionEnum.SERVICE_ERROR);
+            throw new ServiceException(ExceptionCodeEnum.SERVICE_ERROR);
         }
         Object captchaFromSession = httpSession.getAttribute(SecurityConstant.SESSION_KEY_CAPTCHA);
         if (!(captchaFromSession instanceof ImageCode)) {

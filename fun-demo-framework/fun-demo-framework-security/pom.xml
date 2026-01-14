@@ -12,6 +12,7 @@
   <packaging>pom</packaging>
   <artifactId>fun-demo-framework-security</artifactId>
   <modules>
+    <module>fun-demo-framework-security-sa-token</module>
     <module>fun-demo-framework-security-spring</module>
   </modules>
 </project>

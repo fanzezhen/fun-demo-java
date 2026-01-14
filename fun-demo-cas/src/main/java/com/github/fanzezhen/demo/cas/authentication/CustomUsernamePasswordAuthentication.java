@@ -25,8 +25,8 @@ import java.util.List;
  */
 @Slf4j
 public class CustomUsernamePasswordAuthentication extends AbstractUsernamePasswordAuthenticationHandler {
-    public CustomUsernamePasswordAuthentication(String name, ServicesManager servicesManager, PrincipalFactory principalFactory, Integer order) {
-        super(name, servicesManager, principalFactory, order);
+    public CustomUsernamePasswordAuthentication(String name, PrincipalFactory principalFactory, Integer order) {
+        super(name, principalFactory, order);
     }
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(UsernamePasswordCredential usernamePasswordCredential, String s) throws Throwable {
@@ -45,7 +45,7 @@ public class CustomUsernamePasswordAuthentication extends AbstractUsernamePasswo
             throw new FailedLoginException("Sorry, password not correct!");
         } else {
             // 可自定义返回给客户端的多个属性信息
-            HashMap<String, List<Object>> returnInfo = new HashMap<>(1);
+            HashMap<String, List<Object>> returnInfo = HashMap.newHashMap(1);
             returnInfo.put("unitName", Lists.newArrayList(sysUserDto.getUnitName()));
             final List<MessageDescriptor> list = new ArrayList<>();
             return createHandlerResult(usernamePasswordCredential,
