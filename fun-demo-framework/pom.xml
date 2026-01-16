@@ -13,7 +13,7 @@
   <artifactId>fun-demo-framework</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>fun-demo-framework-core-log-web</module>
+    <module>fun-demo-framework-core-all</module>
     <module>fun-demo-framework-security</module>
     <module>fun-demo-framework-data-elasticsearch7</module>
   </modules>

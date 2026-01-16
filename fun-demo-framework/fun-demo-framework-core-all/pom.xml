@@ -10,12 +10,12 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>fun-demo-framework-core-log-web</artifactId>
+  <artifactId>fun-demo-framework-core-all</artifactId>
 
   <dependencies>
     <dependency>
       <groupId>com.github.fanzezhen</groupId>
-      <artifactId>fun-framework-core-log-web</artifactId>
+      <artifactId>fun-framework-core-all</artifactId>
     </dependency>
     <dependency>
       <groupId>jakarta.servlet</groupId>
