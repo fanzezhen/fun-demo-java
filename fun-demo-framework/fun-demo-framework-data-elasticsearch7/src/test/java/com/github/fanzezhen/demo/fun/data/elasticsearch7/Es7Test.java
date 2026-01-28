@@ -184,6 +184,13 @@ class Es7Test {
         log.info("asAggregation: {}", JSON.toJSONString(result.asAggregations()));
     }
 
+    @Test
+    void aggDistinctCount() {
+        int cardinalityCount = elasticsearchTemplate.cardinalityCount( new SearchRequest.Builder(), EnterpriseDocument::getOperName, EnterpriseDocument.class);
+        int distinctCount = elasticsearchTemplate.distinctCount( new SearchRequest.Builder(), EnterpriseDocument::getOperName, EnterpriseDocument.class);
+        Assertions.assertNotEquals(cardinalityCount, distinctCount);
+    }
+
 
     private static SearchRequest.Builder xiaomiHighlightSearch() {
         Map<String, HighlightField> highLightMap = new HashMap<>();

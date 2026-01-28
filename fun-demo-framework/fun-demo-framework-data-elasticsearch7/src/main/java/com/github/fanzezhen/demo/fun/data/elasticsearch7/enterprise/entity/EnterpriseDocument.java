@@ -32,6 +32,11 @@ public class EnterpriseDocument implements IEntity<String> {
     private BigDecimal regCap;
 
     /**
+     * 法人名称
+     */
+    private String operName;
+
+    /**
      * 经营状态
      */
     private String businessStatus;
