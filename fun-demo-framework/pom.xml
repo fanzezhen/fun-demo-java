@@ -16,6 +16,7 @@
     <module>fun-demo-framework-core-all</module>
     <module>fun-demo-framework-security</module>
     <module>fun-demo-framework-data-elasticsearch7</module>
+      <module>fun-demo-framework-jasypt</module>
   </modules>
 
 </project>

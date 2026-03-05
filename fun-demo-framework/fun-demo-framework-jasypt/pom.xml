@@ -10,12 +10,12 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>fun-demo-framework-core-all</artifactId>
-
+  <artifactId>fun-demo-framework-jasypt</artifactId>
+  
   <dependencies>
     <dependency>
       <groupId>com.github.fanzezhen</groupId>
-      <artifactId>fun-framework-core-all</artifactId>
+      <artifactId>fun-framework-jasypt</artifactId>
     </dependency>
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -31,19 +31,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <compilerArgs>
-            <arg>-parameters</arg>
-          </compilerArgs>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>

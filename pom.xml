@@ -46,6 +46,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                <compilerArgs>
+                  <arg>-parameters</arg>
+                </compilerArgs>
+              </configuration>
             </plugin>
             <!-- 生成sources源码包的插件 -->
             <plugin>
