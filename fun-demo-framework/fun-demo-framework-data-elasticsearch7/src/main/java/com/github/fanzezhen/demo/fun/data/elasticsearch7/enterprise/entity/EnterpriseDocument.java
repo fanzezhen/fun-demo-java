@@ -2,7 +2,7 @@ package com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity;
 
 import com.github.fanzezhen.fun.framework.core.data.annotation.Entity;
 import com.github.fanzezhen.fun.framework.core.model.entity.IEntity;
-import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.ESHighlightField;
+import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.HighlightField;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @Data
 @Accessors(chain = true)
-@Entity(table = "enterprise_new")
+@Entity(table = "enterprise")
 public class EnterpriseDocument implements IEntity<String> {
 
     /**
@@ -50,7 +50,7 @@ public class EnterpriseDocument implements IEntity<String> {
     /**
      * 高亮
      */
-    @ESHighlightField
+    @HighlightField
     private Map<String, List<String>> highlightFieldMap;
     
 }

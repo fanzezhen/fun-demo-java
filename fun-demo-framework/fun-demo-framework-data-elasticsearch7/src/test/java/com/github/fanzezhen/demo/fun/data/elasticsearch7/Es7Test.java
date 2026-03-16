@@ -13,6 +13,8 @@ import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity.Enter
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity.RegCapAggregation;
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enums.RegCapRangeEnum;
 import com.github.fanzezhen.fun.framework.core.data.template.ITemplate;
+import com.github.fanzezhen.fun.framework.core.model.bucket.AggregationCondition;
+import com.github.fanzezhen.fun.framework.core.model.bucket.Bucket;
 import com.github.fanzezhen.fun.framework.core.model.result.PageResult;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.model.ISearchResult;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.template.IElasticsearchTemplate;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -182,6 +185,19 @@ class Es7Test {
                 .terms(t -> t.field("business_status")));
         ISearchResult<EnterpriseAggregation> result = this.elasticsearchTemplate.search(searchRequestBuilder, EnterpriseAggregation.class);
         log.info("asAggregation: {}", JSON.toJSONString(result.asAggregations()));
+    }
+
+    @Test
+    void testSearchBucketList() {
+        final SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
+        AggregationCondition aggregationCondition = new AggregationCondition()
+            .setFieldName("eid")
+            .setLimit(5)
+            .setSortOrder(SortOrder.DESCENDING)
+            ;
+        List<Bucket> result = this.elasticsearchTemplate.searchBucketList(
+            searchRequestBuilder, EnterpriseDocument.class, aggregationCondition);
+        log.info("asAggregation: {}", JSON.toJSONString(result));
     }
 
     @Test
