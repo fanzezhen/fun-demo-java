@@ -1,5 +1,6 @@
 package com.github.fanzezhen.demo.fun.data.elasticsearch7;
 
+import cn.hutool.db.sql.Direction;
 import co.elastic.clients.elasticsearch._types.aggregations.AggregationRange;
 import co.elastic.clients.elasticsearch._types.aggregations.RangeAggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
@@ -10,12 +11,16 @@ import com.alibaba.fastjson2.JSON;
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.dao.EnterpriseEsDao;
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity.EnterpriseAggregation;
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity.EnterpriseDocument;
+import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity.EnterpriseHitsBucketAggregation;
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity.RegCapAggregation;
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enums.RegCapRangeEnum;
+import com.github.fanzezhen.fun.framework.core.data.model.AggregationCondition;
+import com.github.fanzezhen.fun.framework.core.data.model.NestedAggregationCondition;
 import com.github.fanzezhen.fun.framework.core.data.template.ITemplate;
-import com.github.fanzezhen.fun.framework.core.model.bucket.AggregationCondition;
 import com.github.fanzezhen.fun.framework.core.model.bucket.Bucket;
+import com.github.fanzezhen.fun.framework.core.model.constant.Constant;
 import com.github.fanzezhen.fun.framework.core.model.result.PageResult;
+import com.github.fanzezhen.fun.framework.data.elasticsearch.base.model.HitsBucket;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.model.ISearchResult;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.template.IElasticsearchTemplate;
 import jakarta.annotation.Resource;
@@ -185,19 +190,98 @@ class Es7Test {
                 .terms(t -> t.field("business_status")));
         ISearchResult<EnterpriseAggregation> result = this.elasticsearchTemplate.search(searchRequestBuilder, EnterpriseAggregation.class);
         log.info("asAggregation: {}", JSON.toJSONString(result.asAggregations()));
+        Assertions.assertNotNull(result);
     }
 
     @Test
-    void testSearchBucketList() {
+    void aggWithHits() {
+        final SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder()
+            .size(0)
+            .aggregations("group_count_status", agg -> agg
+                .terms(t -> t.field("business_status"))
+                // 👇 在这里添加子聚合
+                .aggregations(Constant.RECORDS,subAgg -> subAgg
+                    .topHits(h -> h
+                        .size(1) // 每个分组只取 1 条
+                        .sort(s -> s
+                            .field(f -> f
+                                .field("_doc") // 按文档顺序排序，最快
+                                .order(co.elastic.clients.elasticsearch._types.SortOrder.Asc)
+                            )
+                        )
+                        .source(src -> src
+                            .filter(f -> f
+                                .includes(List.of("name")) // ⬅️ 只返回 name 字段
+                            )
+                        )
+                    )
+                )
+            );
+        ISearchResult<EnterpriseHitsBucketAggregation> result = this.elasticsearchTemplate.search(searchRequestBuilder, EnterpriseHitsBucketAggregation.class);
+        log.info("asAggregation: {}", JSON.toJSONString(result.asAggregations().getBucketList()));
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    void testSearchTermsAggregationBucketList() {
         final SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
         AggregationCondition aggregationCondition = new AggregationCondition()
-            .setFieldName("eid")
-            .setLimit(5)
-            .setSortOrder(SortOrder.DESCENDING)
+            .setFieldName(EnterpriseDocument::getBusinessStatus)
+            .setLimit(3)
+            .setSortOrder(SortOrder.ASCENDING)
             ;
-        List<Bucket> result = this.elasticsearchTemplate.searchBucketList(
+        List<Bucket> result = this.elasticsearchTemplate.searchTermsAggregationBucketList(
             searchRequestBuilder, EnterpriseDocument.class, aggregationCondition);
         log.info("asAggregation: {}", JSON.toJSONString(result));
+        Assertions.assertNotNull(result);
+    }
+    @Test
+    void testSearchScriptedMetricAggregationBucketList() {
+        final SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
+        AggregationCondition aggregationCondition = new AggregationCondition()
+            .setFieldName(EnterpriseDocument::getBusinessStatus)
+            .setLimit(3)
+            .setSortOrder(SortOrder.DESCENDING)
+            ;
+        List<Bucket> result = this.elasticsearchTemplate.searchScriptedMetricAggregationBucketList(
+            searchRequestBuilder, EnterpriseDocument.class, aggregationCondition);
+        log.info("asAggregation: {}", JSON.toJSONString(result));
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    void testSearchTermsAggregationHitsBucketList() {
+        final SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
+        NestedAggregationCondition aggregationCondition = new NestedAggregationCondition()
+            .setHitsLimit(2)
+            .setHitsOrder(Direction.ASC, EnterpriseDocument::getName)
+            ;
+        aggregationCondition
+            .setFieldName(EnterpriseDocument::getBusinessStatus)
+            .setLimit(3)
+            .setSortOrder(SortOrder.ASCENDING)
+            ;
+        List<HitsBucket<EnterpriseDocument>> result = this.elasticsearchTemplate.searchTermsAggregationHitsBucketList(
+            searchRequestBuilder, EnterpriseDocument.class, aggregationCondition);
+        log.info("asAggregation: {}", JSON.toJSONString(result));
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    void testSearchScriptedMetricAggregationHitsBucketList() {
+        final SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
+        NestedAggregationCondition aggregationCondition = new NestedAggregationCondition()
+            .setHitsLimit(1)
+            ;
+        aggregationCondition
+            .setFieldName(EnterpriseDocument::getBusinessStatus)
+            .setLimit(3)
+            .setSortOrder(SortOrder.DESCENDING)
+            ;
+        List<HitsBucket<EnterpriseDocument>> result = this.elasticsearchTemplate.searchScriptedMetricAggregationHitsBucketList(
+            searchRequestBuilder, EnterpriseDocument.class, aggregationCondition);
+        log.info("asAggregation: {}", JSON.toJSONString(result));
+        Assertions.assertNotNull(result);
     }
 
     @Test
