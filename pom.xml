@@ -6,24 +6,19 @@
     <parent>
         <groupId>com.github.fanzezhen</groupId>
         <artifactId>fun-framework-java</artifactId>
-        <version>3.4.3.5</version>
+        <version>4.0.3.20260316</version>
     </parent>
     <artifactId>fun-demo-java</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
     <properties>
-        <revision>3.4.3.5</revision>
-        <java.version>17</java.version>
+        <revision>4.0.3.20260316</revision>
+        <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.github.fanzezhen.demo</groupId>
-                <artifactId>log-biz</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -35,7 +30,6 @@
         <module>fun-demo-maven-package</module>
         <module>fun-demo-web-magic</module>
         <module>fun-demo-framework</module>
-        <module>fun-demo-tsp</module>
     </modules>
 
     <build>
@@ -52,6 +46,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                <compilerArgs>
+                  <arg>-parameters</arg>
+                </compilerArgs>
+              </configuration>
             </plugin>
             <!-- 生成sources源码包的插件 -->
             <plugin>
@@ -66,10 +65,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * 配置自动启动浏览器
- *
- * @author zezhen.fan
  */
 @Slf4j
 @Component

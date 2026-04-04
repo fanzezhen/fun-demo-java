@@ -1,7 +1,7 @@
 package com.github.fanzezhen.demo.cas;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.github.fanzezhen.fun.framework.mp.model.SysUserDto;
+import com.github.fanzezhen.demo.cas.model.SysUserDto;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -17,17 +17,16 @@ import javax.sql.DataSource;
 @Slf4j
 public class DataService {
     public SysUserDto getByUsernameNotNull(String username) {
-        log.info("database username : " + username);
+        log.info("getByUsernameNotNull {}" , username);
         DataSource dataSource = getDataSourceFromSpring();
         // 创建JDBC模板
         JdbcTemplate jdbcTemplate = new JdbcTemplate();
         jdbcTemplate.setDataSource(dataSource);
-        String sql = "SELECT * FROM sys_user WHERE username = ?";
+        String sql = "SELECT * FROM auth_user WHERE username = ?";
         SysUserDto sysUserDto = jdbcTemplate.queryForObject(sql, new Object[]{username}, new BeanPropertyRowMapper<>(SysUserDto.class));
         if (sysUserDto == null) {
             throw new AuthenticationException("用户名不存在：" + username);
         }
-        log.info("database password : " + sysUserDto.getPassword());
         return sysUserDto;
     }
 

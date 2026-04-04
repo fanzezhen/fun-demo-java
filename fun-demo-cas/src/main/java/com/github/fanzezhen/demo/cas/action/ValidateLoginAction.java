@@ -10,9 +10,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-/**
- * @author anumbrella
- */
 @Slf4j
 public class ValidateLoginAction extends AbstractAction {
 

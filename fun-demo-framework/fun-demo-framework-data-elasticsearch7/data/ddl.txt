@@ -1,0 +1,143 @@
+{
+	"mappings": {
+		"dynamic": "strict",
+		"properties": {
+			"name": {
+				"type": "keyword",
+				"index": "true"
+			},
+			"name_st": {
+				"type": "text",
+				"index": "true",
+				"analyzer": "standard"
+			},
+			"name_smart_ik": {
+				"type": "text",
+				"index": "true",
+				"analyzer": "ik_smart_ts"
+			},
+			"name_max_word_ik": {
+				"type": "text",
+				"index": "true",
+				"search_analyzer": "ik_smart_ts",
+				"analyzer": "ik_max_word_ts"
+			},
+			"reg_cap": {
+				"type": "long",
+				"index": "true"
+			},
+			"business_status": {
+				"type": "keyword",
+				"index": "true"
+			},
+			"business_status_code": {
+				"type": "keyword",
+				"index": "true"
+			},
+			"etl_process_time": {
+				"type": "date",
+				"index": "true",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+			},
+			"deprecated": {
+				"type": "keyword",
+				"index": "true"
+			}
+		}
+	},
+	"settings": {
+		"index": {
+			"indexing.slowlog.level": "info",
+			"indexing.slowlog.source": "1000",
+			"indexing.slowlog.threshold.index.info": "5s",
+			"indexing.slowlog.threshold.index.warn": "10s",
+			"search.slowlog.level": "info",
+			"search.slowlog.threshold.query.info": "1s",
+			"search.slowlog.threshold.query.warn": "5s",
+			"highlight.max_analyzed_offset": 100000000,
+			"analysis": {
+				"char_filter": {
+					"punctuation_filter": {
+						"type": "mapping",
+						"mappings": [
+							",=> ;",
+							".=> ;",
+							"[=> ;",
+							"]=> ;",
+							"{=> ;",
+							"}=> ;",
+							"(=> ;",
+							")=> ;",
+							"（=> ;",
+							"）=> ;",
+							"!=> ;",
+							"：=> ;",
+							":=> ;",
+							"@=> ;",
+							"#=> ;",
+							"&=> ;",
+							"$=> ;",
+							"%=> ;",
+							"^=> ;",
+							"*=> ;",
+							"-=> ;",
+							"\"=> ;",
+							"==> ;",
+							"+=> ;",
+							"/=> ;",
+							"\\\\=> ;",
+							"_=> ;",
+							"。=> ;",
+							"，=> ;",
+							"、=> ;",
+							"《=> ;",
+							"》=> ;",
+							"？=> ;",
+							"＊=> ;",
+							"！=> ;",
+							"－=> ;",
+							"＃=> ;",
+							"“=> ;",
+							"”=> ;",
+							"·=> ;",
+							"　=> ;",
+							"<=> ;",
+							">=> ;",
+							"￥=> ;",
+							"……=> ;"
+						]
+					},
+					"tsconvert": {
+						"type": "stconvert",
+						"convert_type": "t2s"
+					}
+				},
+				"analyzer": {
+					"ik_smart_ts": {
+						"char_filter": "tsconvert",
+						"tokenizer": "ik_smart"
+					},
+					"ik_max_word_ts": {
+						"char_filter": "tsconvert",
+						"tokenizer": "ik_max_word"
+					},
+					"space": {
+						"filter": [
+							"lowercase",
+							"word_delimiter",
+							"unique"
+						],
+						"char_filter": [
+							"punctuation_filter"
+						],
+						"type": "custom",
+						"tokenizer": "whitespace"
+					}
+				}
+			}
+		}
+	},
+	"aliases": {
+		"fun_enterprise": {}
+	}
+}

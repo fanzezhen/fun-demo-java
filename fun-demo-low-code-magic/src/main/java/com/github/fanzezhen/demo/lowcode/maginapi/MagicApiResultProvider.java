@@ -1,6 +1,6 @@
 package com.github.fanzezhen.demo.lowcode.maginapi;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.fanzezhen.fun.framework.core.model.response.ActionResult;
 import org.slf4j.MDC;
@@ -16,7 +16,6 @@ import java.util.Map;
  * 自定义MagicApi返回结果
  *
  * @author fanzezhen
- * @createTime 2024/1/8 16:33
  * @since 1.0
  */
 @Component

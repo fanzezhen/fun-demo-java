@@ -1,11 +1,10 @@
 package com.github.fanzezhen.demo.cas;
 
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-
-import javax.validation.constraints.Size;
 
 /**
  * @author zezhen.fan

@@ -16,9 +16,6 @@ import org.springframework.webflow.execution.Action;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author anumbrella
- */
 public class CustomWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public CustomWebflowConfigurer(FlowBuilderServices flowBuilderServices,
                                    FlowDefinitionRegistry flowDefinitionRegistry,
