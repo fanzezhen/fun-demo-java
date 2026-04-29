@@ -1,7 +1,7 @@
 package com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity;
 
 import com.github.fanzezhen.fun.framework.core.data.annotation.Entity;
-import com.github.fanzezhen.fun.framework.core.model.bucket.Bucket;
+import com.github.fanzezhen.fun.framework.core.model.bucket.CountBucket;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.Aggregation;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.AggregationField;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.constant.AggregationFieldEnum;
@@ -15,6 +15,6 @@ import java.util.List;
 public class EnterpriseAggregation {
 
     @AggregationField(AggregationFieldEnum.BUCKETS)
-    private List<Bucket> bucketList;
+    private List<CountBucket> bucketList;
 
 }
