@@ -30,6 +30,7 @@
         <module>fun-demo-maven-package</module>
         <module>fun-demo-web-magic</module>
         <module>fun-demo-framework</module>
+      <module>fun-demo-mdm</module>
     </modules>
 
     <build>

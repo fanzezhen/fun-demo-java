@@ -1,0 +1,46 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: fun-demo-mdm
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mdm?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password:
+  # Jackson 配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+# MyBatis-Plus 配置
+mybatis-plus:
+  configuration:
+    # 开启驼峰命名转换
+    map-underscore-to-camel-case: true
+    # 日志输出
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 主键类型（AUTO 表示自增）
+      id-type: AUTO
+      # 逻辑删除字段
+      logic-delete-field: delFlag
+      # 逻辑删除值（删除时设置为当前时间戳）
+      logic-delete-value: "NOW()"
+      # 逻辑未删除值
+      logic-not-delete-value: 0
+
+# SpringDoc 配置
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  info:
+    title: MDM 动态表单 API
+    description: 演示 fun-framework-java 的动态表单功能
+    version: 4.0.5.20260331
