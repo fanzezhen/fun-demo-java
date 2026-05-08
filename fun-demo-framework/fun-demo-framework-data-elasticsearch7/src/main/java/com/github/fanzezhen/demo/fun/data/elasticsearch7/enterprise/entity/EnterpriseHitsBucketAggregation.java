@@ -1,8 +1,8 @@
 package com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity;
 
 import com.github.fanzezhen.fun.framework.core.data.annotation.Entity;
-import com.github.fanzezhen.fun.framework.core.model.bucket.Bucket;
-import com.github.fanzezhen.fun.framework.core.model.constant.Constant;
+import com.github.fanzezhen.fun.framework.core.model.bucket.CountBucket;
+import com.github.fanzezhen.fun.framework.core.model.constant.StrConstant;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.Aggregation;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.AggregationField;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.BucketField;
@@ -22,8 +22,8 @@ public class EnterpriseHitsBucketAggregation {
 
     @Data
     @Accessors(chain = true)
-    public static class EnterpriseHitsBucket extends Bucket {
-        @BucketField(aggregationName = Constant.RECORDS)
+    public static class EnterpriseHitsBucket extends CountBucket {
+        @BucketField(aggregationName = StrConstant.RECORDS)
         @AggregationField(AggregationFieldEnum.HITS)
         private List<EnterpriseBO> hitList;
 

@@ -6,8 +6,8 @@ import com.github.fanzezhen.demo.cas.DataService;
 import com.github.fanzezhen.demo.cas.CaptchaUsernamePasswordCredential;
 import com.github.fanzezhen.demo.cas.exection.CheckCodeErrorException;
 import com.github.fanzezhen.demo.cas.SecurityConstant;
+import com.github.fanzezhen.demo.cas.model.CaptchaSession;
 import com.github.fanzezhen.demo.cas.model.SysUserDto;
-import com.github.fanzezhen.fun.framework.core.model.ImageCode;
 import com.github.fanzezhen.fun.framework.core.model.exception.ServiceException;
 import com.github.fanzezhen.fun.framework.core.model.exception.enums.ExceptionCodeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -56,11 +56,16 @@ public class CustomerHandlerAuthentication extends AbstractPreAndPostProcessingA
             throw new ServiceException(ExceptionCodeEnum.SERVICE_ERROR);
         }
         Object captchaFromSession = httpSession.getAttribute(SecurityConstant.SESSION_KEY_CAPTCHA);
-        if (!(captchaFromSession instanceof ImageCode)) {
+        if (!(captchaFromSession instanceof CaptchaSession)) {
             throw new CheckCodeErrorException();
         }
-        ImageCode imageCode = (ImageCode) captchaFromSession;
-        if (!captcha.equalsIgnoreCase(imageCode.getCode())) {
+        CaptchaSession captchaSession = (CaptchaSession) captchaFromSession;
+        // 检查验证码是否过期
+        if (captchaSession.isExpired()) {
+            throw new CheckCodeErrorException();
+        }
+        // 校验验证码文本
+        if (!captcha.equalsIgnoreCase(captchaSession.getCode())) {
             throw new CheckCodeErrorException();
         }
         SysUserDto sysUserDto = DataService.getInstance().getByUsernameNotNull(username);

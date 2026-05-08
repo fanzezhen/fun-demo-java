@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 更新动态表单请求
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 @Data
 @Schema(description = "更新动态表单请求")

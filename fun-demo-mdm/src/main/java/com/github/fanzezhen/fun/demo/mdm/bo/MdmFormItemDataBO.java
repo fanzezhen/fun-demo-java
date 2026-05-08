@@ -1,26 +1,24 @@
 package com.github.fanzezhen.fun.demo.mdm.bo;
 
+import com.github.fanzezhen.fun.framework.core.model.bo.BaseTenantGenericBO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * 动态表单字段数据业务对象
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @Schema(description = "动态表单字段数据业务对象")
-public class MdmFormItemDataBO implements Serializable {
+public class MdmFormItemDataBO extends BaseTenantGenericBO<Long> {
 
     private static final long serialVersionUID = 1L;
-
-    @Schema(description = "主键ID")
-    private Long id;
 
     @Schema(description = "表单数据ID")
     private Long formDataId;

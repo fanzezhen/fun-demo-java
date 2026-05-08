@@ -17,11 +17,11 @@ import com.github.fanzezhen.demo.fun.data.elasticsearch7.enums.RegCapRangeEnum;
 import com.github.fanzezhen.fun.framework.core.data.model.AggregationCondition;
 import com.github.fanzezhen.fun.framework.core.data.model.NestedAggregationCondition;
 import com.github.fanzezhen.fun.framework.core.data.template.ITemplate;
-import com.github.fanzezhen.fun.framework.core.model.bucket.Bucket;
-import com.github.fanzezhen.fun.framework.core.model.constant.Constant;
-import com.github.fanzezhen.fun.framework.core.model.result.PageResult;
-import com.github.fanzezhen.fun.framework.data.elasticsearch.base.model.HitsBucket;
+import com.github.fanzezhen.fun.framework.core.model.bucket.CountBucket;
+import com.github.fanzezhen.fun.framework.core.model.constant.StrConstant;
+import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.model.ISearchResult;
+import com.github.fanzezhen.fun.framework.data.elasticsearch.base.model.bucket.HitsCountBucket;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.template.IElasticsearchTemplate;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -165,12 +165,12 @@ class Es7Test {
             requestBuilders,
             EnterpriseDocument.class);
         if (pageResult != null && searchResults != null) {
-            PageResult<EnterpriseDocument> asPageResult = pageResult.asPageResult(1L, 3L);
+            PageDTO<EnterpriseDocument> asPageResult = pageResult.asPageResult(1, 3);
             for (ISearchResult<EnterpriseDocument> mSearchResult : searchResults) {
-                PageResult<EnterpriseDocument> mOnePage = mSearchResult.asPageResult(1L, 3L);
+                PageDTO<EnterpriseDocument> mOnePage = mSearchResult.asPageResult(1, 3);
                 Assertions.assertEquals(asPageResult.getTotal(), mOnePage.getTotal());
-                List<EnterpriseDocument> aRows = asPageResult.getRowList();
-                List<EnterpriseDocument> bRows = mOnePage.getRowList();
+                List<EnterpriseDocument> aRows = asPageResult.getRecords();
+                List<EnterpriseDocument> bRows = mOnePage.getRecords();
                 Assertions.assertEquals(aRows, bRows);
                 if (aRows != null && bRows != null) {
                     int size = aRows.size();
@@ -200,7 +200,7 @@ class Es7Test {
             .aggregations("group_count_status", agg -> agg
                 .terms(t -> t.field("business_status"))
                 // 👇 在这里添加子聚合
-                .aggregations(Constant.RECORDS,subAgg -> subAgg
+                .aggregations(StrConstant.RECORDS,subAgg -> subAgg
                     .topHits(h -> h
                         .size(1) // 每个分组只取 1 条
                         .sort(s -> s
@@ -230,7 +230,7 @@ class Es7Test {
             .setLimit(3)
             .setSortOrder(SortOrder.ASCENDING)
             ;
-        List<Bucket> result = this.elasticsearchTemplate.searchTermsAggregationBucketList(
+        List<CountBucket> result = this.elasticsearchTemplate.searchTermsAggregationBucketList(
             searchRequestBuilder, EnterpriseDocument.class, aggregationCondition);
         log.info("asAggregation: {}", JSON.toJSONString(result));
         Assertions.assertNotNull(result);
@@ -243,14 +243,14 @@ class Es7Test {
             .setLimit(3)
             .setSortOrder(SortOrder.DESCENDING)
             ;
-        List<Bucket> result = this.elasticsearchTemplate.searchScriptedMetricAggregationBucketList(
+        List<CountBucket> result = this.elasticsearchTemplate.searchScriptedMetricAggregationCountBucketList(
             searchRequestBuilder, EnterpriseDocument.class, aggregationCondition);
         log.info("asAggregation: {}", JSON.toJSONString(result));
         Assertions.assertNotNull(result);
     }
 
     @Test
-    void testSearchTermsAggregationHitsBucketList() {
+    void testSearchTermsAggregationHitsCountBucketList() {
         final SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
         NestedAggregationCondition aggregationCondition = new NestedAggregationCondition()
             .setHitsLimit(2)
@@ -261,14 +261,14 @@ class Es7Test {
             .setLimit(3)
             .setSortOrder(SortOrder.ASCENDING)
             ;
-        List<HitsBucket<EnterpriseDocument>> result = this.elasticsearchTemplate.searchTermsAggregationHitsBucketList(
+        List<HitsCountBucket<EnterpriseDocument>> result = this.elasticsearchTemplate.searchTermsAggregationHitsBucketList(
             searchRequestBuilder, EnterpriseDocument.class, aggregationCondition);
         log.info("asAggregation: {}", JSON.toJSONString(result));
         Assertions.assertNotNull(result);
     }
 
     @Test
-    void testSearchScriptedMetricAggregationHitsBucketList() {
+    void testSearchScriptedMetricAggregationHitsCountBucketList() {
         final SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
         NestedAggregationCondition aggregationCondition = new NestedAggregationCondition()
             .setHitsLimit(1)
@@ -278,7 +278,7 @@ class Es7Test {
             .setLimit(3)
             .setSortOrder(SortOrder.DESCENDING)
             ;
-        List<HitsBucket<EnterpriseDocument>> result = this.elasticsearchTemplate.searchScriptedMetricAggregationHitsBucketList(
+        List<HitsCountBucket<EnterpriseDocument>> result = this.elasticsearchTemplate.searchScriptedMetricAggregationHitsBucketList(
             searchRequestBuilder, EnterpriseDocument.class, aggregationCondition);
         log.info("asAggregation: {}", JSON.toJSONString(result));
         Assertions.assertNotNull(result);

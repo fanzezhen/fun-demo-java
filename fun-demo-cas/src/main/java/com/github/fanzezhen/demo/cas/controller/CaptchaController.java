@@ -1,7 +1,8 @@
 package com.github.fanzezhen.demo.cas.controller;
 
 import com.github.fanzezhen.demo.cas.SecurityConstant;
-import com.github.fanzezhen.fun.framework.core.model.ImageCode;
+import com.github.fanzezhen.demo.cas.model.CaptchaSession;
+import com.github.fanzezhen.fun.framework.core.model.common.ImageCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -26,9 +27,10 @@ public class CaptchaController {
     @GetMapping("/image-code")
     public void createCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCode imageCode = createImageCode();
-        // 使用 HttpSession 替代 SessionStrategy 存储验证码
+        // 只在 Session 中存储验证码文本和过期时间，不存储图片对象（避免序列化问题）
         HttpSession session = request.getSession();
-        session.setAttribute(SecurityConstant.SESSION_KEY_CAPTCHA, imageCode);
+        CaptchaSession captchaSession = new CaptchaSession(imageCode.getCode(), imageCode.getExpireTime());
+        session.setAttribute(SecurityConstant.SESSION_KEY_CAPTCHA, captchaSession);
         ImageIO.write(imageCode.getImage(), "jpeg", response.getOutputStream());
     }
 

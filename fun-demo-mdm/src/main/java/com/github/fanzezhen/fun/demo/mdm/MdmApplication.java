@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 演示 fun-framework-java 的动态表单功能
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 @SpringBootApplication
 public class MdmApplication {

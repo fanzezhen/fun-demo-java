@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 创建表单定义请求
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 @Data
 @Schema(description = "创建表单定义请求")

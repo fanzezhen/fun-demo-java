@@ -1,95 +1,130 @@
 # Java后端补充规范
-
 与全局提示词配合使用
 
----
+## 测试驱动开发(TDD)实践
+
+遵循"先测试,后实现"的开发原则
+
+### 添加新功能的 TDD 流程
+
+示例：实现用户注册功能
+
+1. 先写测试用例（Given-When-Then模式）
+2. 运行测试，确认失败（红灯）- 验证测试有效性
+3. 实现最小化代码使测试通过
+   - 校验用户名是否已存在
+   - 加密密码
+   - 保存用户
+   - 转换返回
+4. 运行测试，确认通过（绿灯）
+5. 重构优化（可选），保持测试通过
+
+### 修复 Bug 的 TDD 流程
+
+示例：修复用户名重复注册的 Bug
+
+1. 先写能复现 Bug 的测试
+   - 注册第一个用户
+   - 尝试用相同用户名注册第二个用户
+   - 断言抛出 ServiceException
+2. 运行测试，确认失败（证明成功捕获了 Bug）
+3. 修改代码修复 Bug（添加用户名存在性检查）
+4. 运行测试，确认通过（证明 Bug 已修复）
+5. 运行完整测试套件，确保没有引入新问题
+
+### 测试最佳实践
+
+单元测试命名规范：
+- 方法名格式：should[ExpectedBehavior]When[Condition]
+- 示例：shouldReturnEmptyListWhenNoDataExists
+- 示例：shouldThrowExceptionWhenParameterIsNull
+
+测试结构（Given-When-Then）：
+- Given：准备测试数据
+- When：执行被测试的方法
+- Then：验证结果
+
+测试隔离性：
+- 每个测试方法独立运行，互不影响
+- 单元测试优先使用 H2 内存数据库
+- 如不能使用内存数据库，使用 @BeforeEach 初始化和 @AfterEach 清理测试数据
+
+H2 内存数据库配置（src/test/resources/application.properties）：
+- spring.datasource.url=jdbc:h2:mem:testdb;MODE=MySQL
+- spring.jpa.hibernate.ddl-auto=create-drop
+
+## 框架能力查询
+
+在编写 Java 后端代码前，确认是否需要查阅脚手架能力索引
+
+必须查阅 后端脚手架.md 的场景：
+- 统一返回格式（框架已自动封装，Controller 直接返回业务对象）
+- 全局异常处理或抛出业务异常（框架自动处理 ServiceException）
+- 分页查询、数据校验、对象转换
+- 缓存、分布式锁、异步任务
+- 用户上下文（获取当前登录用户）、租户隔离
+- 数据库操作（MyBatis-Plus 增强功能）
+- 日志记录（操作日志、访问日志、链路追踪）
+- 认证鉴权（Sa-Token、Spring Security）
+
+无需查阅的场景：
+- 纯业务逻辑实现（与通用框架能力无关）
+- 已确认使用框架能力，正在编写具体代码
+
+查阅方式（优雅降级）：
+1. 本地文件：doc/dev/提示词/专业提示词/后端脚手架.md
+2. GitHub Raw（本地不存在时）
+3. Gitee Raw（GitHub 超时时）
 
 ## 典型问题的三层穿梭示例
 
-### NPE（空指针异常）
-
-现象：NullPointerException、判空代码冗长
-本质：契约式设计缺失、防御性编程不足、Optional使用不当
-哲学：类型系统应表达意图、边界验证内部信任、null是十亿美元的错误
-
-方案：
-1. 快速修复：添加 Objects.requireNonNull() 或 if-null 检查
-2. 根本方案：
-   - 方法签名使用 Optional<T> 返回值
-   - 引入 @NonNull/@Nullable 注解（JSR-305）
-   - 构造函数/Setter中做防御性检查
-3. 升华理解：NPE不是bug，是设计缺陷的症状；好的API设计让错误用法编译期失败；让非法状态无法表示
+### 空指针异常（NPE）
+- 现象：NullPointerException、判空代码冗长
+- 本质：契约式设计缺失、防御性编程不足、Optional使用不当
+- 哲学："信任但要验证"、让类型系统表达意图
+- 方案：使用Optional返回值、@NonNull/@Nullable注解、边界处验证
 
 ### 并发问题（线程安全）
-
-现象：多线程下数据不一致、死锁导致程序卡住、高并发时性能急剧下降
-本质：竞态条件（check-then-act非原子操作）、锁粒度过粗、可见性问题
-哲学：共享可变状态是并发问题的根源、不变性是最简单的线程安全、并发是关于时序的推理
-
-方案：
-1. 快速修复：使用 synchronized 或 ReentrantLock 保护临界区、使用 ConcurrentHashMap 替代 HashMap、添加 volatile 保证可见性
-2. 根本方案：
-   - 线程封闭：ThreadLocal 存储线程独占数据
-   - 不可变对象：使用 final 字段 + 不可变集合
-   - 并发工具类：CountDownLatch/CyclicBarrier/CompletableFuture
-   - 响应式编程：Project Reactor/RxJava 避免阻塞
-3. 升华理解：并发设计的三个策略（不变性、线程封闭、同步）、乐观锁优于悲观锁、异步非阻塞是高并发的终极方案
+- 现象：数据不一致、死锁、高并发性能下降
+- 本质：竞态条件（check-then-act非原子）、锁粒度过粗、可见性问题
+- 哲学："共享可变状态是根源"、不变性是最简单的线程安全
+- 方案：synchronized/Lock保护临界区、使用并发集合、不可变对象、ThreadLocal
 
 ### 性能问题（内存与GC）
-
-现象：OutOfMemoryError、Full GC频繁、内存泄漏
-本质：对象生命周期管理失控、大对象直接进入Old区、资源未正确关闭
-哲学：内存是有限的资源、GC不是免费的、局部性是性能的朋友
-
-方案：
-1. 快速修复：增大堆内存（-Xms -Xmx）、及时释放引用（集合clear()、弱引用WeakReference）、使用try-with-resources自动关闭资源
-2. 根本方案：
-   - 对象池化：复用 heavyweight 对象（如数据库连接）
-   - 流式处理：避免一次性加载全部数据到内存
-   - 选择合适的数据结构：ArrayList vs LinkedList
-   - GC调优：根据场景选择G1/ZGC/Shenandoah
-3. 升华理解：性能优化的黄金法则（先测量，再优化）、premature optimization is the root of all evil、内存管理的本质是在时间和空间之间权衡
+- 现象：OutOfMemoryError、Full GC频繁、内存泄漏
+- 本质：对象生命周期失控、大对象直接进Old区、资源未关闭
+- 哲学："内存有限"、GC有代价、局部性原则
+- 方案：try-with-resources、对象池化、流式处理、选择合适数据结构
 
 ### Spring循环依赖
-
-现象：BeanCurrentlyInCreationException、循环依赖导致启动失败、@Autowired注入报错
-本质：架构设计违反单一职责、构造器注入暴露了循环依赖、Setter/字段注入隐藏了问题
-哲学：循环依赖是设计坏味道、依赖图应该是DAG、显式优于隐式
-
-方案：
-1. 快速修复：使用 @Lazy 延迟加载其中一个Bean、改用Setter注入（不推荐）、设置 spring.main.allow-circular-references=true（应急方案）
-2. 根本方案：
-   - 提取共同依赖到第三个Service
-   - 使用事件驱动：ApplicationEvent解耦
-   - 重构为领域服务：重新划分边界
-   - 使用接口隔离：依赖抽象而非具体实现
-3. 升华理解：循环依赖是架构腐化的信号、好的设计让依赖关系单向流动、依赖倒置原则
+- 现象：BeanCurrentlyInCreationException、启动失败
+- 本质：架构违反单一职责、两个类互相依赖说明职责不清
+- 哲学："循环依赖是设计坏味道"、依赖图应为DAG
+- 方案：@Lazy延迟加载、提取共同依赖到第三方Service、事件驱动解耦
 
 ### 事务管理问题
-
-现象：数据不一致、@Transactional不生效、事务回滚失败
-本质：代理机制限制（自调用绕过AOP代理）、异常捕获后未重新抛出、传播行为配置错误
-哲学：事务是原子性的承诺、ACID是分布式系统的基石、声明式事务是AOP的优雅应用
-
-方案：
-1. 快速修复：确保方法public且被外部调用、catch块中throw new RuntimeException()、检查rollbackFor配置
-2. 根本方案：
-   - 提取事务方法到独立Service
-   - 使用 TransactionTemplate 编程式事务
-   - 合理设置超时时间和隔离级别
-   - 分布式场景使用Saga/TCC模式
-3. 升华理解：事务边界应该与业务边界一致、长事务是性能杀手、最终一致性是微服务架构下的新范式
+- 现象：数据不一致、@Transactional不生效、回滚失败
+- 本质：自调用绕过AOP代理、异常被吞掉、传播行为配置错误
+- 哲学："事务是原子性承诺"、ACID基石
+- 方案：方法public且外部调用、catch块重新抛异常、提取事务方法到独立Service
 
 ### Stream API滥用
+- 现象：链式调用难调试、性能比for循环差、可读性下降
+- 本质：过度追求函数式风格、嵌套map/filter降低可读性、并行stream误用
+- 哲学："可读性优于炫技"、惰性求值是核心优势
+- 方案：简单遍历用for-each、复杂聚合用Stream、大数据集才parallel()
 
-现象：Stream链式调用难以调试、性能比传统for循环差、代码可读性下降
-本质：过度追求函数式风格、中间操作重复计算、并行stream误用
-哲学：Stream是声明式编程的工具、惰性求值是Stream的核心优势、可读性优于炫技
+## Maven 构建优化
 
-方案：
-1. 快速修复：复杂逻辑提取为独立方法引用、使用 peek() 调试中间结果、大数据集才考虑 parallel()
-2. 根本方案：
-   - 简单遍历用for-each，复杂聚合用Stream
-   - 自定义Collector封装复杂归约逻辑
-   - 结合Optional处理可能为空的结果
-3. 升华理解：Stream适合数据管道处理不适合业务逻辑、函数式编程的核心是组合、命令式与声明式的平衡
+### 多线程构建规范
+
+**所有 Maven 命令必须使用 `-T` 参数启用多线程构建**
+
+**线程数计算**: `max(CPU核心数, 3)`
+
+**注意**:
+1. 使用 `-T 数字`，不要使用 `-T 1C` 或 `-T 2C`
+2. 最低保证 3 个线程
+3. 不要跳过单元测试（除非明确要求）
+
+---

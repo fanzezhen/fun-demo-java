@@ -1,14 +1,15 @@
 package com.github.fanzezhen.fun.demo.mdm.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormDataBO;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormItemDataBO;
-import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormData;
-import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormItemData;
+import com.github.fanzezhen.fun.demo.mdm.condition.MdmFormDataPageCondition;
+import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormDataEntity;
+import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormItemDataEntity;
 import com.github.fanzezhen.fun.demo.mdm.mapper.MdmFormDataMapper;
 import com.github.fanzezhen.fun.demo.mdm.mapper.MdmFormItemDataMapper;
 import com.github.fanzezhen.fun.demo.mdm.service.IMdmFormDataService;
+import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 import com.github.fanzezhen.fun.framework.core.model.exception.ServiceException;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
@@ -23,9 +24,10 @@ import java.util.List;
  * - 一主多从结构（一条表单数据对应多个字段数据）
  * - 事务管理
  * - 批量插入
+ * - 统一分页模型（Controller 转换 Request → Condition，Service 使用 Condition → DAO）
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 @Service
 public class MdmFormDataServiceImpl implements IMdmFormDataService {
@@ -40,7 +42,7 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
     @Transactional(rollbackFor = Exception.class)
     public MdmFormDataBO submit(Long formId, Long formDefId, List<MdmFormItemDataBO> itemDataList) {
         // 1. 创建表单数据主记录
-        MdmFormData formData = new MdmFormData();
+        MdmFormDataEntity formData = new MdmFormDataEntity();
         formData.setFormId(formId);
         formData.setFormDefId(formDefId);
         mdmFormDataMapper.insert(formData);
@@ -48,7 +50,7 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
         // 2. 批量插入字段数据
         if (itemDataList != null && !itemDataList.isEmpty()) {
             for (MdmFormItemDataBO itemBO : itemDataList) {
-                MdmFormItemData itemData = new MdmFormItemData();
+                MdmFormItemDataEntity itemData = new MdmFormItemDataEntity();
                 BeanUtils.copyProperties(itemBO, itemData);
                 itemData.setFormDataId(formData.getId());
                 mdmFormItemDataMapper.insert(itemData);
@@ -61,17 +63,17 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
 
     @Override
     public MdmFormDataBO getById(Long id) {
-        MdmFormData formData = mdmFormDataMapper.selectById(id);
+        MdmFormDataEntity formData = mdmFormDataMapper.selectById(id);
         if (formData == null) {
             throw new ServiceException("表单数据不存在");
         }
 
         // 查询关联的字段数据列表
-        LambdaQueryWrapper<MdmFormItemData> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MdmFormItemData::getFormDataId, id)
-                .orderByAsc(MdmFormItemData::getFormItemCode)
-                .orderByAsc(MdmFormItemData::getSeq);
-        List<MdmFormItemData> itemDataList = mdmFormItemDataMapper.selectList(wrapper);
+        LambdaQueryWrapper<MdmFormItemDataEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MdmFormItemDataEntity::getFormDataId, id)
+                .orderByAsc(MdmFormItemDataEntity::getFormItemCode)
+                .orderByAsc(MdmFormItemDataEntity::getSeq);
+        List<MdmFormItemDataEntity> itemDataList = mdmFormItemDataMapper.selectList(wrapper);
 
         // 组装 BO
         MdmFormDataBO bo = new MdmFormDataBO();
@@ -81,17 +83,12 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
     }
 
     @Override
-    public Page<MdmFormDataBO> pageByFormId(Page<MdmFormData> page, Long formId) {
-        LambdaQueryWrapper<MdmFormData> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MdmFormData::getFormId, formId)
-                .orderByDesc(MdmFormData::getCreateTime);
+    public PageDTO<MdmFormDataBO> page(MdmFormDataPageCondition condition) {
+        // 1. 调用 DAO 层查询，获取 PageDTO<Entity>
+        PageDTO<MdmFormDataEntity> entityPage = mdmFormDataMapper.page(condition);
 
-        Page<MdmFormData> entityPage = mdmFormDataMapper.selectPage(page, wrapper);
-
-        // 转换为 BO（不加载字段数据列表，提升列表查询性能）
-        Page<MdmFormDataBO> boPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
-        boPage.setRecords(entityPage.getRecords().stream().map(this::entityToBO).toList());
-        return boPage;
+        // 2. 使用 PageDTO.convert() 转换为 BO（不加载字段数据列表，提升列表查询性能）
+        return entityPage.convert(this::entityToBO);
     }
 
     @Override
@@ -104,8 +101,8 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
         }
 
         // 2. 删除关联的字段数据（逻辑删除）
-        LambdaQueryWrapper<MdmFormItemData> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MdmFormItemData::getFormDataId, id);
+        LambdaQueryWrapper<MdmFormItemDataEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MdmFormItemDataEntity::getFormDataId, id);
         mdmFormItemDataMapper.delete(wrapper);
 
         return true;
@@ -114,7 +111,7 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
     /**
      * Entity 转 BO（不包含字段列表）
      */
-    private MdmFormDataBO entityToBO(MdmFormData entity) {
+    private MdmFormDataBO entityToBO(MdmFormDataEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -126,7 +123,7 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
     /**
      * 字段 Entity 转 BO
      */
-    private MdmFormItemDataBO itemEntityToBO(MdmFormItemData entity) {
+    private MdmFormItemDataBO itemEntityToBO(MdmFormItemDataEntity entity) {
         if (entity == null) {
             return null;
         }

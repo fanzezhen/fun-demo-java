@@ -1,17 +1,18 @@
 package com.github.fanzezhen.fun.demo.mdm.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormDataBO;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormItemDataBO;
-import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormData;
+import com.github.fanzezhen.fun.demo.mdm.condition.MdmFormDataPageCondition;
+import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 
 import java.util.List;
 
 /**
  * 动态表单数据服务接口
+ * 遵循框架分层规范：Service 层使用 PageCondition 入参，返回 PageDTO<BO>
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 public interface IMdmFormDataService {
 
@@ -34,13 +35,12 @@ public interface IMdmFormDataService {
     MdmFormDataBO getById(Long id);
 
     /**
-     * 根据表单ID分页查询表单数据
+     * 分页查询表单数据
      *
-     * @param page 分页参数
-     * @param formId 表单ID
+     * @param condition 分页查询条件（包含分页参数和查询条件）
      * @return 分页结果
      */
-    Page<MdmFormDataBO> pageByFormId(Page<MdmFormData> page, Long formId);
+    PageDTO<MdmFormDataBO> page(MdmFormDataPageCondition condition);
 
     /**
      * 根据ID删除表单数据（逻辑删除）

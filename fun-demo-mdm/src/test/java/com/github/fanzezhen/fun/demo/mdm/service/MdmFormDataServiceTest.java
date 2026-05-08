@@ -1,12 +1,12 @@
 package com.github.fanzezhen.fun.demo.mdm.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.fanzezhen.fun.demo.mdm.MdmApplication;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormBO;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormDataBO;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormItemDataBO;
-import com.github.fanzezhen.fun.demo.mdm.entity.MdmForm;
-import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormData;
+import com.github.fanzezhen.fun.demo.mdm.condition.MdmFormDataPageCondition;
+import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormEntity;
+import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 演示一主多从结构的数据处理
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 @SpringBootTest(classes = MdmApplication.class)
 class MdmFormDataServiceTest {
@@ -39,7 +39,7 @@ class MdmFormDataServiceTest {
     @BeforeEach
     void setUp() {
         // 创建测试表单
-        MdmForm form = new MdmForm();
+        MdmFormEntity form = new MdmFormEntity();
         form.setName("用户反馈表");
         form.setRemark("收集用户反馈");
         form.setReleased(true);
@@ -145,8 +145,9 @@ class MdmFormDataServiceTest {
         }
 
         // 2. 分页查询
-        Page<MdmFormData> page = new Page<>(1, 10);
-        Page<MdmFormDataBO> result = mdmFormDataService.pageByFormId(page, testFormId);
+        MdmFormDataPageCondition condition = new MdmFormDataPageCondition(1, 10);
+        condition.setFormId(testFormId);
+        PageDTO<MdmFormDataBO> result = mdmFormDataService.page(condition);
 
         // 3. 验证结果
         assertNotNull(result);

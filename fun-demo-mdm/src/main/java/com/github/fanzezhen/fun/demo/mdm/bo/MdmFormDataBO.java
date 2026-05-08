@@ -1,11 +1,11 @@
 package com.github.fanzezhen.fun.demo.mdm.bo;
 
+import com.github.fanzezhen.fun.framework.core.model.bo.BaseTenantGenericBO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -13,29 +13,15 @@ import java.util.List;
  * 包含表单数据及其字段值列表
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @Schema(description = "动态表单数据业务对象")
-public class MdmFormDataBO implements Serializable {
+public class MdmFormDataBO extends BaseTenantGenericBO<Long> {
 
     private static final long serialVersionUID = 1L;
-
-    @Schema(description = "主键ID")
-    private Long id;
-
-    @Schema(description = "创建人ID")
-    private Long createUserId;
-
-    @Schema(description = "创建时间")
-    private LocalDateTime createTime;
-
-    @Schema(description = "更新时间")
-    private LocalDateTime updateTime;
-
-    @Schema(description = "租户ID")
-    private Long tenantId;
 
     @Schema(description = "表单ID")
     private Long formId;

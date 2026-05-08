@@ -1,14 +1,16 @@
 package com.github.fanzezhen.fun.demo.mdm.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormBO;
-import com.github.fanzezhen.fun.demo.mdm.entity.MdmForm;
+import com.github.fanzezhen.fun.demo.mdm.condition.MdmFormPageCondition;
+import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormEntity;
+import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 
 /**
  * 动态表单服务接口
+ * 遵循框架分层规范：Service 层使用 PageCondition 入参，返回 PageDTO<BO>
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 public interface IMdmFormService {
 
@@ -18,7 +20,7 @@ public interface IMdmFormService {
      * @param entity 表单实体
      * @return 表单业务对象
      */
-    MdmFormBO create(MdmForm entity);
+    MdmFormBO create(MdmFormEntity entity);
 
     /**
      * 更新表单
@@ -26,7 +28,7 @@ public interface IMdmFormService {
      * @param entity 表单实体
      * @return 表单业务对象
      */
-    MdmFormBO update(MdmForm entity);
+    MdmFormBO update(MdmFormEntity entity);
 
     /**
      * 根据ID查询表单
@@ -47,12 +49,10 @@ public interface IMdmFormService {
     /**
      * 分页查询表单列表
      *
-     * @param page 分页参数
-     * @param name 表单名称（模糊查询）
-     * @param released 是否已发布
+     * @param condition 分页查询条件（包含分页参数和查询条件）
      * @return 分页结果
      */
-    Page<MdmFormBO> page(Page<MdmForm> page, String name, Boolean released);
+    PageDTO<MdmFormBO> page(MdmFormPageCondition condition);
 
     /**
      * 发布表单

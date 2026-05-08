@@ -1,11 +1,12 @@
 package com.github.fanzezhen.fun.demo.mdm.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormDataBO;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormItemDataBO;
-import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormData;
+import com.github.fanzezhen.fun.demo.mdm.condition.MdmFormDataPageCondition;
+import com.github.fanzezhen.fun.demo.mdm.request.MdmFormDataPageRequest;
 import com.github.fanzezhen.fun.demo.mdm.request.MdmFormDataSubmitRequest;
 import com.github.fanzezhen.fun.demo.mdm.service.IMdmFormDataService;
+import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,9 +20,10 @@ import java.util.List;
 /**
  * 动态表单数据 Controller
  * 演示表单数据提交和查询功能
+ * 使用框架统一分页模型：Controller 接收 Request，转换为 Condition 传递给 Service
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 @RestController
 @RequestMapping("/mdm/form-data")
@@ -54,13 +56,13 @@ public class MdmFormDataController {
 
     @GetMapping("/page")
     @Operation(summary = "分页查询表单数据", description = "根据表单ID分页查询所有提交的数据")
-    public Page<MdmFormDataBO> page(
-            @Parameter(description = "当前页", example = "1") @RequestParam(defaultValue = "1") Long current,
-            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") Long size,
-            @Parameter(description = "表单ID", required = true) @RequestParam Long formId
-    ) {
-        Page<MdmFormData> page = new Page<>(current, size);
-        return mdmFormDataService.pageByFormId(page, formId);
+    public PageDTO<MdmFormDataBO> page(@Valid MdmFormDataPageRequest request) {
+        // Controller 负责 Request → Condition 转换
+        MdmFormDataPageCondition condition = new MdmFormDataPageCondition(request.getCurrent(), request.getSize());
+        condition.setFormId(request.getFormId());
+
+        // Service 层使用 Condition
+        return mdmFormDataService.page(condition);
     }
 
     @DeleteMapping("/{id}")

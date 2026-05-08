@@ -256,16 +256,6 @@ fun-demo-mdm/
     └── application.yml       # 配置文件
 ```
 
-## 🔧 技术栈
-
-| 技术 | 版本 | 说明 |
-|-----|-----|-----|
-| Spring Boot | 4.0.5 | 基础框架 |
-| MyBatis-Plus | 3.5.16 | ORM 框架 |
-| MySQL | 8.x | 数据库 |
-| SpringDoc | 3.0.1 | 接口文档 |
-| fun-framework-java | 4.0.5.20260331 | 父项目脚手架 |
-
 ## 📌 注意事项
 
 ### 1. 遵循框架规范

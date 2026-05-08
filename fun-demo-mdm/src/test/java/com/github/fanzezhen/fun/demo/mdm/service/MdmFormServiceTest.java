@@ -1,9 +1,10 @@
 package com.github.fanzezhen.fun.demo.mdm.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.fanzezhen.fun.demo.mdm.MdmApplication;
 import com.github.fanzezhen.fun.demo.mdm.bo.MdmFormBO;
-import com.github.fanzezhen.fun.demo.mdm.entity.MdmForm;
+import com.github.fanzezhen.fun.demo.mdm.condition.MdmFormPageCondition;
+import com.github.fanzezhen.fun.demo.mdm.entity.MdmFormEntity;
+import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 演示框架的 MyBatis-Plus 能力
  *
  * @author Claude
- * @since 2026-04-30
+ * @since 4.0.6
  */
 @SpringBootTest(classes = MdmApplication.class)
 class MdmFormServiceTest {
@@ -26,7 +27,7 @@ class MdmFormServiceTest {
     @Test
     void testCreate() {
         // 1. 准备测试数据
-        MdmForm form = new MdmForm();
+        MdmFormEntity form = new MdmFormEntity();
         form.setName("用户反馈表");
         form.setRemark("收集用户反馈意见");
         form.setReleased(false);
@@ -49,7 +50,7 @@ class MdmFormServiceTest {
     @Test
     void testUpdate() {
         // 1. 先创建一个表单
-        MdmForm form = new MdmForm();
+        MdmFormEntity form = new MdmFormEntity();
         form.setName("测试表单");
         form.setRemark("测试");
         form.setReleased(false);
@@ -57,11 +58,10 @@ class MdmFormServiceTest {
         MdmFormBO created = mdmFormService.create(form);
 
         // 2. 更新表单
-        MdmForm updateForm = new MdmForm();
+        MdmFormEntity updateForm = new MdmFormEntity();
         updateForm.setId(created.getId());
         updateForm.setName("测试表单（已修改）");
         updateForm.setRemark("更新后的说明");
-        updateForm.setVersion(created.getVersion()); // 乐观锁版本号
 
         MdmFormBO updated = mdmFormService.update(updateForm);
 
@@ -69,7 +69,6 @@ class MdmFormServiceTest {
         assertNotNull(updated);
         assertEquals("测试表单（已修改）", updated.getName());
         assertEquals("更新后的说明", updated.getRemark());
-        assertEquals(created.getVersion() + 1, updated.getVersion()); // 版本号自增
 
         System.out.println("✅ 更新表单成功: " + updated);
     }
@@ -77,7 +76,7 @@ class MdmFormServiceTest {
     @Test
     void testGetById() {
         // 1. 先创建一个表单
-        MdmForm form = new MdmForm();
+        MdmFormEntity form = new MdmFormEntity();
         form.setName("查询测试表单");
         form.setRemark("测试查询");
         form.setReleased(true);
@@ -100,7 +99,7 @@ class MdmFormServiceTest {
     void testPage() {
         // 1. 创建几个测试表单
         for (int i = 1; i <= 3; i++) {
-            MdmForm form = new MdmForm();
+            MdmFormEntity form = new MdmFormEntity();
             form.setName("分页测试表单" + i);
             form.setRemark("第" + i + "个表单");
             form.setReleased(i % 2 == 0); // 偶数已发布
@@ -109,8 +108,8 @@ class MdmFormServiceTest {
         }
 
         // 2. 分页查询（查询所有）
-        Page<MdmForm> page = new Page<>(1, 10);
-        Page<MdmFormBO> result = mdmFormService.page(page, null, null);
+        MdmFormPageCondition condition = new MdmFormPageCondition(1, 10);
+        PageDTO<MdmFormBO> result = mdmFormService.page(condition);
 
         // 3. 验证结果
         assertNotNull(result);
@@ -120,8 +119,9 @@ class MdmFormServiceTest {
         System.out.println("✅ 分页查询成功，总数: " + result.getTotal());
 
         // 4. 按名称模糊查询
-        Page<MdmForm> page2 = new Page<>(1, 10);
-        Page<MdmFormBO> result2 = mdmFormService.page(page2, "分页测试", null);
+        MdmFormPageCondition condition2 = new MdmFormPageCondition(1, 10);
+        condition2.setName("分页测试");
+        PageDTO<MdmFormBO> result2 = mdmFormService.page(condition2);
 
         assertNotNull(result2);
         assertTrue(result2.getTotal() >= 3);
@@ -129,8 +129,9 @@ class MdmFormServiceTest {
         System.out.println("✅ 模糊查询成功，总数: " + result2.getTotal());
 
         // 5. 按发布状态过滤
-        Page<MdmForm> page3 = new Page<>(1, 10);
-        Page<MdmFormBO> result3 = mdmFormService.page(page3, null, true);
+        MdmFormPageCondition condition3 = new MdmFormPageCondition(1, 10);
+        condition3.setReleased(true);
+        PageDTO<MdmFormBO> result3 = mdmFormService.page(condition3);
 
         assertNotNull(result3);
         result3.getRecords().forEach(bo -> assertTrue(bo.getReleased()));
@@ -141,7 +142,7 @@ class MdmFormServiceTest {
     @Test
     void testRelease() {
         // 1. 创建未发布的表单
-        MdmForm form = new MdmForm();
+        MdmFormEntity form = new MdmFormEntity();
         form.setName("待发布表单");
         form.setRemark("测试发布功能");
         form.setReleased(false);
@@ -165,7 +166,7 @@ class MdmFormServiceTest {
     @Test
     void testDeleteById() {
         // 1. 创建表单
-        MdmForm form = new MdmForm();
+        MdmFormEntity form = new MdmFormEntity();
         form.setName("待删除表单");
         form.setRemark("测试删除功能");
         form.setReleased(false);

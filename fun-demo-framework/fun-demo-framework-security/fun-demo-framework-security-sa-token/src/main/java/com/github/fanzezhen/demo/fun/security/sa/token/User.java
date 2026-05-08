@@ -1,6 +1,6 @@
 package com.github.fanzezhen.demo.fun.security.sa.token;
 
-import com.github.fanzezhen.fun.framework.core.model.IUser;
+import com.github.fanzezhen.fun.framework.core.model.common.IUser;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
