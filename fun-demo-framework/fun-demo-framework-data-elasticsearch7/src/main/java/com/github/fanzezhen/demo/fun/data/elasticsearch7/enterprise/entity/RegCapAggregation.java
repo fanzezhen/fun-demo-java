@@ -1,6 +1,6 @@
 package com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity;
 
-import com.github.fanzezhen.fun.framework.core.data.annotation.Entity;
+import com.github.fanzezhen.fun.framework.core.model.annotation.Entity;
 import com.github.fanzezhen.fun.framework.core.model.bucket.RangeCountBucket;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.Aggregation;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.AggregationField;

@@ -1,6 +1,6 @@
 package com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity;
 
-import com.github.fanzezhen.fun.framework.core.data.annotation.Entity;
+import com.github.fanzezhen.fun.framework.core.model.annotation.Entity;
 import com.github.fanzezhen.fun.framework.core.model.entity.IEntity;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.annotation.HighlightField;
 import lombok.Data;

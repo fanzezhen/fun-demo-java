@@ -1,6 +1,7 @@
 package com.github.fanzezhen.demo.fun.core.thread;
 
-import com.github.fanzezhen.fun.framework.core.thread.PoolExecutors;
+import com.github.fanzezhen.fun.framework.core.springboot.thread.ThreadPoolTaskExecutorRepository;
+import com.github.fanzezhen.fun.framework.core.thread.ThreadPoolExecutorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -21,12 +22,12 @@ class PoolExecutorsTest {
     @AfterEach
     void tearDown() {
         // 清理已创建的线程池
-        PoolExecutors.destroy();
+        ThreadPoolTaskExecutorRepository.destroy(60);
     }
 
     @Test
     void testDefaultThreadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor executor = PoolExecutors.defaultThreadPoolTaskExecutor();
+        ThreadPoolTaskExecutor executor = ThreadPoolTaskExecutorRepository.defaultThreadPoolTaskExecutor();
         
         assertNotNull(executor);
         assertEquals(1, executor.getCorePoolSize()); // DEFAULT_CORE_SIZE
@@ -39,7 +40,7 @@ class PoolExecutorsTest {
     @Test
     void testNewThreadPoolTaskExecutor() {
         String testName = "testExecutor";
-        ThreadPoolTaskExecutor executor = PoolExecutors.newThreadPoolTaskExecutor(testName, 5, 10);
+        ThreadPoolTaskExecutor executor = ThreadPoolTaskExecutorRepository.newThreadPoolTaskExecutor(testName, 5, 10);
         assertNotNull(executor);
         executor.execute(()-> System.out.println("123"));
         assertEquals(5, executor.getCorePoolSize());
@@ -51,7 +52,7 @@ class PoolExecutorsTest {
     @Test
     void testComputeThreadPoolTaskExecutor() {
         String testName = "computeTestExecutor";
-        ThreadPoolTaskExecutor executor = PoolExecutors.computeThreadPoolTaskExecutor(testName,2, 5,10);
+        ThreadPoolTaskExecutor executor = ThreadPoolTaskExecutorRepository.computeThreadPoolTaskExecutor(testName,2, 5,10);
         assertNotNull(executor);
         assertEquals(2, executor.getCorePoolSize());
         assertEquals(5, executor.getMaxPoolSize());
@@ -63,7 +64,7 @@ class PoolExecutorsTest {
     @Test
     void testComputeThreadPoolExecutor() {
         String testName = "testPoolExecutor";
-        ExecutorService executor = PoolExecutors.computeThreadPoolExecutor(
+        ExecutorService executor = ThreadPoolExecutorRepository.computeThreadPoolExecutor(
             testName,
             2,
             5,
@@ -79,12 +80,12 @@ class PoolExecutorsTest {
 
     @Test
     void testGetPoolTaskExecutorMap() {
-        Map<String, ThreadPoolTaskExecutor> executorMap = PoolExecutors.getPoolTaskExecutorMap();
+        Map<String, ThreadPoolTaskExecutor> executorMap = ThreadPoolTaskExecutorRepository.getPoolTaskExecutorMap();
         assertNotNull(executorMap);
         
         // 验证线程池创建后是否加入到Map中
-        ThreadPoolTaskExecutor executor = PoolExecutors.newThreadPoolTaskExecutor("mapTest", 1, 2);
-        assertTrue(PoolExecutors.getPoolTaskExecutorMap().containsKey("mapTest"));
+        ThreadPoolTaskExecutor executor = ThreadPoolTaskExecutorRepository.newThreadPoolTaskExecutor("mapTest", 1, 2);
+        assertTrue(ThreadPoolTaskExecutorRepository.getPoolTaskExecutorMap().containsKey("mapTest"));
         
         executor.shutdown();
     }
@@ -92,11 +93,11 @@ class PoolExecutorsTest {
     @Test
     void testDestroy() {
         // 创建一个线程池
-        ThreadPoolTaskExecutor executor = PoolExecutors.newThreadPoolTaskExecutor("destroyTest", 1, 2);
-        assertTrue(PoolExecutors.getPoolTaskExecutorMap().containsKey("destroyTest"));
+        ThreadPoolTaskExecutor executor = ThreadPoolTaskExecutorRepository.newThreadPoolTaskExecutor("destroyTest", 1, 2);
+        assertTrue(ThreadPoolTaskExecutorRepository.getPoolTaskExecutorMap().containsKey("destroyTest"));
         
         // 调用destroy方法
-        PoolExecutors.destroy();
+        ThreadPoolTaskExecutorRepository.destroy(60);
         
         // 验证方法执行无异常
         assertTrue(true);

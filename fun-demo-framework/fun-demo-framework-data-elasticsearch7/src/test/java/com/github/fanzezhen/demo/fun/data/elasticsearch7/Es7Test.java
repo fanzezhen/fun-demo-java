@@ -14,9 +14,9 @@ import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity.Enter
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity.EnterpriseHitsBucketAggregation;
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enterprise.entity.RegCapAggregation;
 import com.github.fanzezhen.demo.fun.data.elasticsearch7.enums.RegCapRangeEnum;
-import com.github.fanzezhen.fun.framework.core.data.model.AggregationCondition;
-import com.github.fanzezhen.fun.framework.core.data.model.NestedAggregationCondition;
-import com.github.fanzezhen.fun.framework.core.data.template.ITemplate;
+import com.github.fanzezhen.fun.framework.core.model.common.AggregationCondition;
+import com.github.fanzezhen.fun.framework.core.model.common.NestedAggregationCondition;
+import com.github.fanzezhen.fun.framework.core.model.template.ITemplate;
 import com.github.fanzezhen.fun.framework.core.model.bucket.CountBucket;
 import com.github.fanzezhen.fun.framework.core.model.constant.StrConstant;
 import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
