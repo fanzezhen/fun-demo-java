@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "demo-basic": {
+      "url": "http://localhost:8080/mcp/demo-basic",
+      "type": "http",
+      "headers": {
+        "x-api-key": "AK-x99PyfJFCswxmJzDfH5Yp57Q6blkfIw9"
+      },
+      "description": "Demo 基础工具 - 提供打招呼和计算器功能"
+    },
+    "demo-system": {
+      "url": "http://localhost:8080/mcp/demo-system",
+      "type": "http",
+      "headers": {
+        "x-api-key": "AK-x99PyfJFCswxmJzDfH5Yp57Q6blkfIw9"
+      },
+      "description": "Demo 系统工具 - 提供系统信息和内存查询功能"
+    },
+    "demo-enterprise": {
+      "url": "http://localhost:8080/mcp/demo-enterprise",
+      "type": "http",
+      "headers": {
+        "x-api-key": "AK-x99PyfJFCswxmJzDfH5Yp57Q6blkfIw9"
+      },
+      "description": "Demo 企业工具 - 提供企业信息查询功能（需要 API 密钥）"
+    }
+  }
+}

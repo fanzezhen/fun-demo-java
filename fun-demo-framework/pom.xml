@@ -16,8 +16,9 @@
     <module>fun-demo-framework-core-all</module>
     <module>fun-demo-framework-security</module>
     <module>fun-demo-framework-data-elasticsearch7</module>
-      <module>fun-demo-framework-jasypt</module>
-      <module>fun-demo-framework-spring-doc</module>
+    <module>fun-demo-framework-jasypt</module>
+    <module>fun-demo-framework-spring-ai</module>
+    <module>fun-demo-framework-spring-doc</module>
   </modules>
 
 </project>

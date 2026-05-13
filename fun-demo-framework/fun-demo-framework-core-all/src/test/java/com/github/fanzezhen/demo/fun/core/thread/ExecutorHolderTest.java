@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * <ul>
  *   <li>ThreadPoolExecutorRepository.addDecorator 存在递归引用缺陷</li>
  *   <li>当多个装饰器注册时会形成无限递归调用</li>
- *   <li>详见文档：.agentdocs/workflow/20260509-线程池上下文装饰器问题修复.md</li>
  * </ul>
  * </p>
  * <p>
