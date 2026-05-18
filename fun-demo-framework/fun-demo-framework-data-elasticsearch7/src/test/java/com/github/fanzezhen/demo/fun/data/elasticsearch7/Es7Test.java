@@ -18,7 +18,7 @@ import com.github.fanzezhen.fun.framework.core.model.common.AggregationCondition
 import com.github.fanzezhen.fun.framework.core.model.common.NestedAggregationCondition;
 import com.github.fanzezhen.fun.framework.core.model.template.ITemplate;
 import com.github.fanzezhen.fun.framework.core.model.bucket.CountBucket;
-import com.github.fanzezhen.fun.framework.core.model.constant.StrConstant;
+import com.github.fanzezhen.fun.framework.core.model.constant.NormalTypeConstant;
 import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.model.ISearchResult;
 import com.github.fanzezhen.fun.framework.data.elasticsearch.base.model.bucket.HitsCountBucket;
@@ -200,7 +200,7 @@ class Es7Test {
             .aggregations("group_count_status", agg -> agg
                 .terms(t -> t.field("business_status"))
                 // 👇 在这里添加子聚合
-                .aggregations(StrConstant.RECORDS,subAgg -> subAgg
+                .aggregations(NormalTypeConstant.STR_RECORDS,subAgg -> subAgg
                     .topHits(h -> h
                         .size(1) // 每个分组只取 1 条
                         .sort(s -> s
