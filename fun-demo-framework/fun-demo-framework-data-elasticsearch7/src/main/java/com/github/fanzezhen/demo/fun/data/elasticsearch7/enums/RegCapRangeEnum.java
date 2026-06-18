@@ -37,7 +37,8 @@ public enum RegCapRangeEnum {
     /**
      * 5000w以上
      */
-    E("5", "500000", null);
+    E("5", "500000", null),
+    ;
 
     /**
      * 描述

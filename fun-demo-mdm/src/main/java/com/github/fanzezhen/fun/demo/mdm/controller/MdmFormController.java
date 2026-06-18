@@ -8,12 +8,12 @@ import com.github.fanzezhen.fun.demo.mdm.request.MdmFormPageRequest;
 import com.github.fanzezhen.fun.demo.mdm.request.MdmFormUpdateRequest;
 import com.github.fanzezhen.fun.demo.mdm.service.IMdmFormService;
 import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
+import com.github.fanzezhen.fun.framework.core.model.util.MapperFacadeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -39,8 +39,7 @@ public class MdmFormController {
     @PostMapping
     @Operation(summary = "创建表单", description = "创建一个新的动态表单")
     public MdmFormBO create(@Valid @RequestBody MdmFormCreateRequest request) {
-        MdmFormEntity entity = new MdmFormEntity();
-        BeanUtils.copyProperties(request, entity);
+        MdmFormEntity entity = MapperFacadeUtil.map(request, MdmFormEntity.class);
         // Controller 直接返回 BO，框架自动封装为 Result<MdmFormBO>
         return mdmFormService.create(entity);
     }
@@ -48,8 +47,7 @@ public class MdmFormController {
     @PutMapping
     @Operation(summary = "更新表单", description = "更新已有表单信息")
     public MdmFormBO update(@Valid @RequestBody MdmFormUpdateRequest request) {
-        MdmFormEntity entity = new MdmFormEntity();
-        BeanUtils.copyProperties(request, entity);
+        MdmFormEntity entity = MapperFacadeUtil.map(request, MdmFormEntity.class);
         return mdmFormService.update(entity);
     }
 

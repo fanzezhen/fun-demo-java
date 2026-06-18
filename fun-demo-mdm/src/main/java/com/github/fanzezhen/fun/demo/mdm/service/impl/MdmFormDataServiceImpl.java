@@ -11,8 +11,8 @@ import com.github.fanzezhen.fun.demo.mdm.mapper.MdmFormItemDataMapper;
 import com.github.fanzezhen.fun.demo.mdm.service.IMdmFormDataService;
 import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 import com.github.fanzezhen.fun.framework.core.model.exception.ServiceException;
+import com.github.fanzezhen.fun.framework.core.model.util.MapperFacadeUtil;
 import jakarta.annotation.Resource;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,8 +50,7 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
         // 2. 批量插入字段数据
         if (itemDataList != null && !itemDataList.isEmpty()) {
             for (MdmFormItemDataBO itemBO : itemDataList) {
-                MdmFormItemDataEntity itemData = new MdmFormItemDataEntity();
-                BeanUtils.copyProperties(itemBO, itemData);
+                MdmFormItemDataEntity itemData = MapperFacadeUtil.map(itemBO, MdmFormItemDataEntity.class);
                 itemData.setFormDataId(formData.getId());
                 mdmFormItemDataMapper.insert(itemData);
             }
@@ -76,8 +75,7 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
         List<MdmFormItemDataEntity> itemDataList = mdmFormItemDataMapper.selectList(wrapper);
 
         // 组装 BO
-        MdmFormDataBO bo = new MdmFormDataBO();
-        BeanUtils.copyProperties(formData, bo);
+        MdmFormDataBO bo = MapperFacadeUtil.map(formData, MdmFormDataBO.class);
         bo.setItemDataList(itemDataList.stream().map(this::itemEntityToBO).toList());
         return bo;
     }
@@ -112,23 +110,13 @@ public class MdmFormDataServiceImpl implements IMdmFormDataService {
      * Entity 转 BO（不包含字段列表）
      */
     private MdmFormDataBO entityToBO(MdmFormDataEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        MdmFormDataBO bo = new MdmFormDataBO();
-        BeanUtils.copyProperties(entity, bo);
-        return bo;
+        return MapperFacadeUtil.map(entity, MdmFormDataBO.class);
     }
 
     /**
      * 字段 Entity 转 BO
      */
     private MdmFormItemDataBO itemEntityToBO(MdmFormItemDataEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        MdmFormItemDataBO bo = new MdmFormItemDataBO();
-        BeanUtils.copyProperties(entity, bo);
-        return bo;
+        return MapperFacadeUtil.map(entity, MdmFormItemDataBO.class);
     }
 }

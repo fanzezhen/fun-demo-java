@@ -7,12 +7,12 @@ import com.github.fanzezhen.fun.demo.mdm.request.MdmFormDataPageRequest;
 import com.github.fanzezhen.fun.demo.mdm.request.MdmFormDataSubmitRequest;
 import com.github.fanzezhen.fun.demo.mdm.service.IMdmFormDataService;
 import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
+import com.github.fanzezhen.fun.framework.core.model.util.MapperFacadeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,11 +38,7 @@ public class MdmFormDataController {
     public MdmFormDataBO submit(@Valid @RequestBody MdmFormDataSubmitRequest request) {
         // 转换 Request 为 BO
         List<MdmFormItemDataBO> itemDataList = request.getItemDataList().stream()
-                .map(itemRequest -> {
-                    MdmFormItemDataBO bo = new MdmFormItemDataBO();
-                    BeanUtils.copyProperties(itemRequest, bo);
-                    return bo;
-                })
+                .map(itemRequest -> MapperFacadeUtil.map(itemRequest, MdmFormItemDataBO.class))
                 .toList();
 
         return mdmFormDataService.submit(request.getFormId(), request.getFormDefId(), itemDataList);

@@ -90,24 +90,31 @@ class CacheTest {
         for (int i = 1; i <= 5; i++) {
             int threadNum = i + 1;
             new Thread(() -> {
-                Assertions.assertThrows(ServiceException.class, () -> {
-                    // 调用锁服务执行业务逻辑
-                    lockService.lockAndExecute(() -> {
-                        // 业务逻辑：统计执行次数，模拟耗时操作（确保锁能被持有一段时间）
-                        log.info("线程{} 获取到锁，开始执行业务逻辑", threadNum);
-                        executeCount.incrementAndGet();
-                        // 模拟业务耗时（1秒），确保其他线程在这段时间内获取不到锁
-                        ThreadUtil.sleep(1000);
-                        return "success";
-                    }, lockKey, limit, waitTime, timeUnit);
-                });
-                // 线程执行完成，计数器减1
-                countDownLatch.countDown();
+                try {
+                    Assertions.assertThrows(ServiceException.class, () -> {
+                        // 调用锁服务执行业务逻辑
+                        lockService.lockAndExecute(() -> {
+                            // 业务逻辑：统计执行次数，模拟耗时操作（确保锁能被持有一段时间）
+                            log.info("线程{} 获取到锁，开始执行业务逻辑", threadNum);
+                            executeCount.incrementAndGet();
+                            // 模拟业务耗时（1秒），确保其他线程在这段时间内获取不到锁
+                            ThreadUtil.sleep(1000);
+                            return "success";
+                        }, lockKey, limit, waitTime, timeUnit);
+                    });
+                } finally {
+                    // 线程执行完成，计数器减1。
+                    // 必须放在 finally 中：若 assertThrows 断言失败抛出 AssertionFailedError，
+                    // 计数仍需递减，否则主线程 await() 会永久阻塞，导致 fork 测试 JVM 不退出、
+                    // 进而 -T 多线程构建整体挂起。
+                    countDownLatch.countDown();
+                }
             }).start();
         }
 
-        // 等待所有线程执行完成
-        countDownLatch.await();
+        // 等待所有线程执行完成（加超时，避免任一线程异常退出时永久阻塞）
+        Assertions.assertTrue(countDownLatch.await(30, TimeUnit.SECONDS),
+            "等待竞争线程超时，可能存在线程未正常计数或锁未释放");
 
         // 断言：只有1个线程成功执行了业务逻辑（锁生效）
         log.info("最终成功执行业务逻辑的线程数：{}", executeCount.get());

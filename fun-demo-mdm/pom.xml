@@ -53,6 +53,16 @@
 
   <build>
     <plugins>
+      <!-- Orika（MapperFacadeUtil）在 JDK21 强封装下需反射访问 JDK 内部类，
+           单测须补充 add-opens 参数，否则映射相关用例报 InaccessibleObjectException。
+           编码参数与父 POM 默认 argLine 保持一致，避免覆盖丢失。 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>-Dfile.encoding=UTF-8 --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED</argLine>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

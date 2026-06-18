@@ -7,8 +7,8 @@ import com.github.fanzezhen.fun.demo.mdm.mapper.MdmFormMapper;
 import com.github.fanzezhen.fun.demo.mdm.service.IMdmFormService;
 import com.github.fanzezhen.fun.framework.core.model.dto.PageDTO;
 import com.github.fanzezhen.fun.framework.core.model.exception.ServiceException;
+import com.github.fanzezhen.fun.framework.core.model.util.MapperFacadeUtil;
 import jakarta.annotation.Resource;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,15 +94,9 @@ public class MdmFormServiceImpl implements IMdmFormService {
     }
 
     /**
-     * Entity 转 BO
-     * 实际项目可使用 MapStruct 或框架提供的对象转换工具
+     * Entity 转 BO（基于 Orika 的框架统一映射工具）
      */
     private MdmFormBO entityToBO(MdmFormEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        MdmFormBO bo = new MdmFormBO();
-        BeanUtils.copyProperties(entity, bo);
-        return bo;
+        return MapperFacadeUtil.map(entity, MdmFormBO.class);
     }
 }

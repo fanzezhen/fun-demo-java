@@ -34,7 +34,8 @@ public enum DemoEnterpriseApi {
     /**
      * 企业电话列表
      */
-    ENTERPRISE_PHONE_LIST("/openapi/v1/enterprise/basic/get-phone-list");
+    ENTERPRISE_PHONE_LIST("/openapi/v1/enterprise/basic/get-phone-list"),
+    ;
 
     private final String path;
 

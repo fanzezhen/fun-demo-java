@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * @author zezhen.fan
@@ -22,7 +22,8 @@ import java.util.Random;
 @Controller
 @RequestMapping("/captcha")
 public class CaptchaController {
-    private final Random random = new Random();
+    // 验证码字符关乎安全，使用 SecureRandom 保证随机源不可预测
+    private final SecureRandom random = new SecureRandom();
 
     @GetMapping("/image-code")
     public void createCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
